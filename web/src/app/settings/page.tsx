@@ -1,18 +1,7 @@
-import {
-  AlertCircle,
-  ArrowLeft,
-  Bot,
-  CheckCircle2,
-  FlaskConical,
-  ImageIcon,
-  KeyRound,
-  Users,
-  Video,
-} from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
-import { getCurrentUser, getModelSettings, getUsers } from "@/lib/api";
+import { AppHeader } from "@/components/app-header";
+import { API_BASE_URL, getCurrentUser, getModelSettings, getUsers } from "@/lib/api";
 import { getAuthToken } from "@/lib/session";
 import type { UserAccount } from "@/types";
 
@@ -37,419 +26,430 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
   if (!settings) {
     return (
-      <main className="min-h-screen bg-[#f7f8fb] px-5 py-6 text-slate-950 lg:px-8">
-        <div className="mx-auto max-w-5xl">
-          <BackLink />
-          <div className="mt-6 rounded-md border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
-            模型配置读取失败，请确认后端服务已经启动。
+      <div className="app">
+        <AppHeader current="settings" sub="MODEL CONFIGURATION" userName={currentUser?.display_name ?? null} />
+        <main className="app-body">
+          <div className="pane">
+            <div className="wrap">
+
+              {/* 降级态：错误细节 + 重试 + 排查指引，不是只甩一句报错 */}
+              <div className="state-lede is-warn">
+                <svg className="ic ic-lg" aria-hidden="true" style={{ color: "var(--warn)" }}><use href="#i-warn"></use></svg>
+                <div>
+                  <b>模型配置服务当前不可达 · 已自动降级</b>
+                  <span>页面不会只甩一句报错。下面给出错误细节、重试入口与逐步排查指引。</span>
+                </div>
+              </div>
+
+              <section className="sec">
+                <div className="sec-hd">
+                  <div>
+                    <span className="eyebrow">ERROR DETAIL</span>
+                    <h1>读取失败</h1>
+                  </div>
+                  <span className="mono-note">GET /api/v1/model-settings · 服务端转发</span>
+                </div>
+
+                <div className="err-box">
+                  <h3>模型配置读取失败</h3>
+                  <p>
+                    前端服务端无法从后端读取模型配置（接口地址 <span className="mono">{API_BASE_URL}/api/v1/model-settings</span>）。
+                    这不是页面问题，通常是后端服务未启动、地址配置错误或网络不通。
+                  </p>
+
+                  <div className="trace mt-3">
+                    <div className="trace-hd"><span>错误链路</span><span>TRACE</span></div>
+                    <div className="trace-step">
+                      <span className="trace-dot done" aria-hidden="true"></span>
+                      <span>浏览器请求 <span className="mono">GET /settings</span></span>
+                      <span className="trace-time">已完成</span>
+                    </div>
+                    <div className="trace-step">
+                      <span className="trace-dot done" aria-hidden="true"></span>
+                      <span>前端服务端调用 <span className="mono">getModelSettings()</span></span>
+                      <span className="trace-time">已完成</span>
+                    </div>
+                    <div className="trace-step">
+                      <span className="trace-dot run" aria-hidden="true"></span>
+                      <span>请求后端 <span className="mono">{API_BASE_URL}/api/v1/model-settings</span> 失败</span>
+                      <span className="trace-time">失败</span>
+                    </div>
+                    <div className="trace-step">
+                      <span className="trace-dot skip" aria-hidden="true"></span>
+                      <span>页面转入降级态，等待重试</span>
+                      <span className="trace-time">—</span>
+                    </div>
+                  </div>
+
+                  <div className="err-actions">
+                    <Link href="/settings" className="btn btn-primary">
+                      <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                      重试读取
+                    </Link>
+                    <Link href="/login" className="btn">重新登录</Link>
+                  </div>
+                  <p className="guide-hint mt-3">后端恢复后点击「重试读取」即可回到正常配置态；当前页面没有可用的缓存快照（本页未实现配置缓存兜底），无法展示只读数据。</p>
+                </div>
+              </section>
+
+              <section className="sec">
+                <div className="sec-hd">
+                  <div>
+                    <span className="eyebrow">TROUBLESHOOTING</span>
+                    <h2>排查指引</h2>
+                  </div>
+                  <span className="mono-note">按顺序执行，多数问题在前两步就能定位</span>
+                </div>
+
+                <div className="panel">
+                  <div className="panel-body">
+                    <div className="trace" style={{ marginBottom: "0" }}>
+                      <div className="trace-hd"><span>3 步定位</span><span>CHECKLIST</span></div>
+                      <div className="trace-step">
+                        <span className="trace-dot run" aria-hidden="true"></span>
+                        <span>确认后端进程存活：后端服务应监听在 <span className="mono">{API_BASE_URL}</span> 指向的地址与端口</span>
+                        <span className="trace-time">STEP 1</span>
+                      </div>
+                      <div className="trace-step">
+                        <span className="trace-dot skip" aria-hidden="true"></span>
+                        <span>确认网络可达：从前端服务所在机器请求 <span className="mono">{API_BASE_URL}/api/v1/model-settings</span>，期望返回 JSON</span>
+                        <span className="trace-time">STEP 2</span>
+                      </div>
+                      <div className="trace-step">
+                        <span className="trace-dot skip" aria-hidden="true"></span>
+                        <span>确认会话有效：若后端返回 401，回到登录页重新登录后再试</span>
+                        <span className="trace-time">STEP 3</span>
+                      </div>
+                    </div>
+                    <div className="err-actions">
+                      <Link href="/settings" className="btn btn-primary">重试读取</Link>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f8fb] px-5 py-6 text-slate-950 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <BackLink />
-            <p className="mt-5 text-sm font-medium text-emerald-700">Model Settings</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
-              模型配置中心
-            </h1>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <StatusPill
-              label="文本模型"
-              value={settings.text.model || "未配置"}
-              active={settings.text.has_api_key && Boolean(settings.text.model)}
-            />
-            <StatusPill
-              label="图片模型"
-              value={settings.image.model || "未配置"}
-              active={settings.image.has_api_key && Boolean(settings.image.model)}
-            />
-            <StatusPill
-              label="视频模型"
-              value={settings.video.model || "未配置"}
-              active={settings.video.has_api_key && Boolean(settings.video.model)}
-            />
-          </div>
-        </header>
+    <div className="app">
+      <AppHeader current="settings" sub="MODEL CONFIGURATION" userName={currentUser?.display_name ?? null} />
 
-        {saveStatus ? (
-          <Notice
-            ok={saveStatus === "ok"}
-            message={saveStatus === "ok" ? "配置已保存，下一次调用会使用新模型。" : "配置保存失败。"}
-          />
-        ) : null}
+      <main className="app-body">
+        <div className="pane">
+          <div className="wrap">
 
-        {testStatus ? (
-          <Notice
-            ok={testStatus === "ok"}
-            message={`${testTargetLabel(testTarget)}测试${
-              testStatus === "ok" ? "通过" : "失败"
-            }：${testMessage || "-"}`}
-          />
-        ) : null}
-
-        {userStatus ? (
-          <Notice
-            ok={userStatus === "created"}
-            message={userStatus === "created" ? "用户已创建。" : "用户创建失败，请检查邮箱是否重复。"}
-          />
-        ) : null}
-
-        <form
-          id="model-settings-form"
-          action="/settings/update"
-          method="post"
-          className="grid gap-6 xl:grid-cols-3"
-        >
-          <section className="rounded-md border border-slate-200 bg-white p-5">
-            <SectionTitle
-              icon={<Bot className="h-5 w-5" aria-hidden="true" />}
-              title="文本模型"
-              subtitle="用于诊断、主图方案、视频脚本和复盘。"
-              tone="bg-slate-950"
-            />
-            <div className="mt-5 space-y-4">
-              <TextInput
-                label="Base URL"
-                name="text_base_url"
-                defaultValue={settings.text.base_url}
-                placeholder="https://api.deepseek.com"
-              />
-              <TextInput
-                label="Model"
-                name="text_model"
-                defaultValue={settings.text.model}
-                placeholder="deepseek-v4-pro"
-              />
-              <SecretInput
-                label="API Key"
-                name="text_api_key"
-                masked={settings.text.api_key_masked}
-              />
-            </div>
-          </section>
-
-          <section className="rounded-md border border-slate-200 bg-white p-5">
-            <SectionTitle
-              icon={<ImageIcon className="h-5 w-5" aria-hidden="true" />}
-              title="图片模型"
-              subtitle="用于主图方案的一键出图。"
-              tone="bg-emerald-600"
-            />
-            <div className="mt-5 space-y-4">
-              <TextInput
-                label="Provider"
-                name="image_provider"
-                defaultValue={settings.image.provider}
-                placeholder="dashscope"
-              />
-              <TextInput
-                label="Model"
-                name="image_model"
-                defaultValue={settings.image.model}
-                placeholder="wan2.6-t2i"
-              />
-              <TextInput
-                label="Base URL"
-                name="image_base_url"
-                defaultValue={settings.image.base_url}
-                placeholder="https://dashscope.aliyuncs.com/api/v1"
-              />
-              <div className="grid gap-4 sm:grid-cols-2">
-                <TextInput
-                  label="Size"
-                  name="image_size"
-                  defaultValue={settings.image.size}
-                  placeholder="1280*1280"
-                />
-                <TextInput
-                  label="业务空间 ID"
-                  name="image_workspace_id"
-                  defaultValue={settings.image.workspace_id}
-                  placeholder="llm-..."
-                />
-                <NumberInput
-                  label="轮询间隔秒"
-                  name="image_poll_interval_seconds"
-                  defaultValue={settings.image.poll_interval_seconds}
-                />
-                <NumberInput
-                  label="最大轮询次数"
-                  name="image_poll_max_attempts"
-                  defaultValue={settings.image.poll_max_attempts}
-                />
+            {/* 配置来源说明行 */}
+            <div className="state-lede is-accent">
+              <span className="status-led" aria-hidden="true"></span>
+              <div>
+                <b>配置来源 <span className="mono">/api/v1/model-settings</span> · 本次读取自后端</b>
+                <span>密钥不回显明文，留空保存表示沿用后端已存的 Key。</span>
               </div>
-              <SecretInput
-                label="API Key"
-                name="image_api_key"
-                masked={settings.image.api_key_masked}
-              />
             </div>
-          </section>
 
-          <section className="rounded-md border border-slate-200 bg-white p-5">
-            <SectionTitle
-              icon={<Video className="h-5 w-5" aria-hidden="true" />}
-              title="视频模型"
-              subtitle="用于短视频脚本的一键成片。"
-              tone="bg-violet-600"
-            />
-            <div className="mt-5 space-y-4">
-              <ProviderSelect
-                label="Provider"
-                name="video_provider"
-                defaultValue={settings.video.provider}
-              />
-              <TextInput
-                label="Model"
-                name="video_model"
-                defaultValue={settings.video.model}
-                placeholder="wan2.6-t2v"
-              />
-              <TextInput
-                label="Base URL"
-                name="video_base_url"
-                defaultValue={settings.video.base_url}
-                placeholder="https://dashscope.aliyuncs.com/api/v1"
-              />
-              <div className="grid gap-4 sm:grid-cols-2">
-                <TextInput
-                  label="Size"
-                  name="video_size"
-                  defaultValue={settings.video.size}
-                  placeholder="1280*720"
-                />
-                <NumberInput
-                  label="时长秒"
-                  name="video_duration"
-                  defaultValue={settings.video.duration}
-                />
-                <TextInput
-                  label="业务空间 ID"
-                  name="video_workspace_id"
-                  defaultValue={settings.video.workspace_id}
-                  placeholder="llm-..."
-                />
-                <NumberInput
-                  label="轮询间隔秒"
-                  name="video_poll_interval_seconds"
-                  defaultValue={settings.video.poll_interval_seconds}
-                />
-                <NumberInput
-                  label="最大轮询次数"
-                  name="video_poll_max_attempts"
-                  defaultValue={settings.video.poll_max_attempts}
-                />
+            {/* 三类模型状态 */}
+            <section className="sec">
+              <div className="sec-hd">
+                <div>
+                  <span className="eyebrow">MODEL REGISTRY</span>
+                  <h1>模型配置中心</h1>
+                </div>
               </div>
-              <SecretInput
-                label="API Key"
-                name="video_api_key"
-                masked={settings.video.api_key_masked}
-              />
-            </div>
-          </section>
-        </form>
+              <div className="kpi-grid">
+                <ModelStatusCard label="文本模型" value={settings.text.model} active={settings.text.has_api_key && Boolean(settings.text.model)} />
+                <ModelStatusCard label="图片模型" value={settings.image.model} active={settings.image.has_api_key && Boolean(settings.image.model)} />
+                <ModelStatusCard label="视频模型" value={settings.video.model} active={settings.video.has_api_key && Boolean(settings.video.model)} />
+              </div>
+            </section>
 
-        {canManageUsers ? (
-          <UserManagementPanel users={users} />
-        ) : (
-          <ReadOnlyNotice message="当前账号没有用户管理权限，只能查看模型配置状态。" />
-        )}
+            {saveStatus ? (
+              saveStatus === "ok" ? (
+                <div className="test-verdict" role="status">
+                  <svg className="ic ic-lg" aria-hidden="true" style={{ color: "var(--success)" }}><use href="#i-check"></use></svg>
+                  <div><b>配置已保存，下一次调用会使用新模型。</b></div>
+                </div>
+              ) : (
+                <div className="alert is-error" role="alert">
+                  <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                  <div><b>配置保存失败。</b></div>
+                </div>
+              )
+            ) : null}
 
-        {canEdit ? (
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              type="submit"
-              form="model-settings-form"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-slate-950 px-5 text-sm font-semibold text-white hover:bg-slate-800"
+            {testStatus ? (
+              testStatus === "ok" ? (
+                <div className="test-verdict" role="status">
+                  <svg className="ic ic-lg" aria-hidden="true" style={{ color: "var(--success)" }}><use href="#i-check"></use></svg>
+                  <div>
+                    <b>{testTargetLabel(testTarget)}测试通过</b>
+                    <p className="t-mini mono">{testMessage || "-"}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="alert is-error" role="alert">
+                  <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                  <div>
+                    <b>{testTargetLabel(testTarget)}测试失败</b>
+                    <p>{testMessage || "-"}</p>
+                  </div>
+                </div>
+              )
+            ) : null}
+
+            {userStatus ? (
+              userStatus === "created" ? (
+                <div className="alert is-info" role="status">
+                  <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                  <div><b>用户已创建。</b></div>
+                </div>
+              ) : (
+                <div className="alert is-error" role="alert">
+                  <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                  <div><b>用户创建失败，请检查邮箱是否重复。</b></div>
+                </div>
+              )
+            ) : null}
+
+            <form
+              id="model-settings-form"
+              action="/settings/update"
+              method="post"
+              className="stack-5"
             >
-              <KeyRound className="h-4 w-4" aria-hidden="true" />
-              保存配置
-            </button>
-            <TestButton target="text" label="测试文本模型" />
-            <TestButton target="image" label="测试图片模型" />
-            <TestButton target="video" label="测试视频模型" />
+              <section className="panel">
+                <div className="panel-head">
+                  <h3>文本模型</h3>
+                  <span className="badge badge-online">
+                    <span className="status-led" aria-hidden="true"></span>
+                    用于诊断、主图方案、视频脚本和复盘
+                  </span>
+                </div>
+                <div className="panel-body">
+                  <div className="form-grid">
+                    <div className="field">
+                      <label htmlFor="text-base-url">Base URL</label>
+                      <input id="text-base-url" name="text_base_url" defaultValue={settings.text.base_url} placeholder="https://api.deepseek.com" className="input" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="text-model">Model</label>
+                      <input id="text-model" name="text_model" defaultValue={settings.text.model} placeholder="deepseek-v4-pro" className="input" />
+                    </div>
+                    <SecretInput label="API Key" name="text_api_key" masked={settings.text.api_key_masked} />
+                  </div>
+                </div>
+              </section>
+
+              <section className="panel">
+                <div className="panel-head">
+                  <h3>图片模型</h3>
+                  <span className="badge">用于主图方案的一键出图</span>
+                </div>
+                <div className="panel-body">
+                  <div className="form-grid">
+                    <div className="field">
+                      <label htmlFor="image-provider">Provider</label>
+                      <input id="image-provider" name="image_provider" defaultValue={settings.image.provider} placeholder="dashscope" className="input" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="image-model">Model</label>
+                      <input id="image-model" name="image_model" defaultValue={settings.image.model} placeholder="wan2.6-t2i" className="input" />
+                    </div>
+                    <div className="field is-wide">
+                      <label htmlFor="image-base-url">Base URL</label>
+                      <input id="image-base-url" name="image_base_url" defaultValue={settings.image.base_url} placeholder="https://dashscope.aliyuncs.com/api/v1" className="input" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="image-size">Size</label>
+                      <input id="image-size" name="image_size" defaultValue={settings.image.size} placeholder="1280*1280" className="input" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="image-workspace">业务空间 ID</label>
+                      <input id="image-workspace" name="image_workspace_id" defaultValue={settings.image.workspace_id} placeholder="llm-..." className="input" />
+                    </div>
+                    <NumberInput label="轮询间隔秒" name="image_poll_interval_seconds" defaultValue={settings.image.poll_interval_seconds} />
+                    <NumberInput label="最大轮询次数" name="image_poll_max_attempts" defaultValue={settings.image.poll_max_attempts} />
+                    <SecretInput label="API Key" name="image_api_key" masked={settings.image.api_key_masked} />
+                  </div>
+                </div>
+              </section>
+
+              <section className="panel">
+                <div className="panel-head">
+                  <h3>视频模型</h3>
+                  <span className="badge">用于短视频脚本的一键成片</span>
+                </div>
+                <div className="panel-body">
+                  <div className="form-grid">
+                    <ProviderSelect label="Provider" name="video_provider" defaultValue={settings.video.provider} />
+                    <div className="field">
+                      <label htmlFor="video-model">Model</label>
+                      <input id="video-model" name="video_model" defaultValue={settings.video.model} placeholder="wan2.6-t2v" className="input" />
+                    </div>
+                    <div className="field is-wide">
+                      <label htmlFor="video-base-url">Base URL</label>
+                      <input id="video-base-url" name="video_base_url" defaultValue={settings.video.base_url} placeholder="https://dashscope.aliyuncs.com/api/v1" className="input" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="video-size">Size</label>
+                      <input id="video-size" name="video_size" defaultValue={settings.video.size} placeholder="1280*720" className="input" />
+                    </div>
+                    <NumberInput label="时长秒" name="video_duration" defaultValue={settings.video.duration} />
+                    <div className="field">
+                      <label htmlFor="video-workspace">业务空间 ID</label>
+                      <input id="video-workspace" name="video_workspace_id" defaultValue={settings.video.workspace_id} placeholder="llm-..." className="input" />
+                    </div>
+                    <NumberInput label="轮询间隔秒" name="video_poll_interval_seconds" defaultValue={settings.video.poll_interval_seconds} />
+                    <NumberInput label="最大轮询次数" name="video_poll_max_attempts" defaultValue={settings.video.poll_max_attempts} />
+                    <SecretInput label="API Key" name="video_api_key" masked={settings.video.api_key_masked} />
+                  </div>
+                </div>
+              </section>
+
+              {canEdit ? (
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    form="model-settings-form"
+                    className="btn btn-primary"
+                  >
+                    保存配置
+                  </button>
+                  <TestButton target="text" label="测试文本模型" />
+                  <TestButton target="image" label="测试图片模型" />
+                  <TestButton target="video" label="测试视频模型" />
+                </div>
+              ) : null}
+            </form>
+
+            {canEdit ? null : (
+              <div className="alert is-warn">
+                <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                <div><b>当前账号为只读权限，模型保存和测试按钮已隐藏。</b></div>
+              </div>
+            )}
+
+            {canManageUsers ? (
+              <UserManagementPanel users={users} />
+            ) : (
+              <div className="alert is-warn">
+                <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                <div><b>当前账号没有用户管理权限，只能查看模型配置状态。</b></div>
+              </div>
+            )}
           </div>
-        ) : (
-          <ReadOnlyNotice message="当前账号为只读权限，模型保存和测试按钮已隐藏。" />
-        )}
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }
 
-/** 渲染 ReadOnlyNotice 组件，集中展示读取onlynotice所需的数据、状态和操作入口。 */
-function ReadOnlyNotice({ message }: { message: string }) {
+/** 渲染 ModelStatusCard 组件，集中展示模型状态卡片所需的数据、状态和操作入口。 */
+function ModelStatusCard({ label, value, active }: { label: string; value: string; active: boolean }) {
   return (
-    <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      {message}
-    </div>
+    <article className="kpi">
+      <span className="kpi-lbl">{label}</span>
+      <span className={`kpi-val mono ${value ? "" : "is-idle"}`}>{value || "未配置"}</span>
+      <div className="kpi-foot">
+        <span className={`badge ${active ? "badge-online" : "badge-warn"}`}>
+          <span className={`status-led ${active ? "" : "is-off"}`} aria-hidden="true"></span>
+          {active ? "已配置密钥" : "缺少模型或密钥"}
+        </span>
+      </div>
+    </article>
   );
 }
 
 /** 渲染 UserManagementPanel 组件，集中展示用户管理面板所需的数据、状态和操作入口。 */
 function UserManagementPanel({ users }: { users: UserAccount[] }) {
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-5">
-      <SectionTitle
-        icon={<Users className="h-5 w-5" aria-hidden="true" />}
-        title="用户与权限"
-        subtitle="按角色控制编辑、成员管理和投放确认权限"
-        tone="bg-sky-700"
-      />
+    <section className="panel">
+      <div className="panel-head">
+        <h3>用户与权限</h3>
+        <span className="badge">按角色控制编辑、成员管理和投放确认权限</span>
+      </div>
 
-      <form action="/settings/users/create" method="post" className="mt-5 grid gap-4 lg:grid-cols-[1fr_1fr_180px_180px_auto] lg:items-end">
-        <TextInput label="邮箱" name="email" defaultValue="" placeholder="ops@example.com" />
-        <TextInput label="姓名" name="display_name" defaultValue="" placeholder="运营同学" />
-        <RoleSelect />
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">初始密码</span>
-          <input
-            name="password"
-            type="password"
-            minLength={8}
-            placeholder="可留空"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-          />
-        </label>
-        <button
-          type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800"
-        >
-          添加用户
-        </button>
-      </form>
+      <div className="panel-body">
+        <form action="/settings/users/create" method="post" className="stack-4">
+          <div className="form-grid">
+            <div className="field">
+              <label htmlFor="u-email">邮箱</label>
+              <input id="u-email" name="email" placeholder="ops@example.com" className="input" />
+            </div>
+            <div className="field">
+              <label htmlFor="u-name">姓名</label>
+              <input id="u-name" name="display_name" placeholder="运营同学" className="input" />
+            </div>
+            <RoleSelect />
+            <div className="field">
+              <label htmlFor="u-password">初始密码</label>
+              <input
+                id="u-password"
+                name="password"
+                type="password"
+                minLength={8}
+                placeholder="可留空"
+                className="input"
+              />
+            </div>
+          </div>
+          <div className="form-actions" style={{ borderTop: "0", paddingTop: "0", marginTop: "0" }}>
+            <button type="submit" className="btn btn-primary">添加用户</button>
+          </div>
+        </form>
+      </div>
 
-      <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
-        <div className="grid grid-cols-[1fr_120px_120px_1.2fr] bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500">
-          <span>用户</span>
-          <span>角色</span>
-          <span>状态</span>
-          <span>权限</span>
+      {users.length === 0 ? (
+        <div className="panel-body">
+          <div className="empty">
+            <h4>暂无用户</h4>
+            <p>先添加 owner 或 operator，再逐步接入登录鉴权。</p>
+          </div>
         </div>
-        {users.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-slate-500">
-            暂无用户。先添加 owner 或 operator，再逐步接入登录鉴权。
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-200">
-            {users.map((user) => (
-              <div key={user.id} className="grid grid-cols-[1fr_120px_120px_1.2fr] px-4 py-3 text-sm">
-                <div>
-                  <p className="font-medium text-slate-950">{user.display_name}</p>
-                  <p className="mt-1 text-xs text-slate-500">{user.email}</p>
-                </div>
-                <span className="text-slate-700">{roleLabel(user.role)}</span>
-                <span className="text-slate-700">{user.status === "active" ? "启用" : "停用"}</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {permissionBadges(user).map((badge) => (
-                    <span key={badge} className="rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-600">
-                      {badge}
+      ) : (
+        <div className="tbl-wrap">
+          <table className="tbl">
+            <thead>
+              <tr>
+                <th scope="col">用户</th>
+                <th scope="col">角色</th>
+                <th scope="col">状态</th>
+                <th scope="col">权限</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>
+                    <div className="cell-model">
+                      <b>{user.display_name}</b>
+                      <span>{user.email}</span>
+                    </div>
+                  </td>
+                  <td>{roleLabel(user.role)}</td>
+                  <td>
+                    <span className={`badge ${user.status === "active" ? "badge-online" : "badge-warn"}`}>
+                      {user.status === "active" ? "启用" : "停用"}
                     </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+                  </td>
+                  <td>
+                    <div className="cell-actions">
+                      {permissionBadges(user).map((badge) => (
+                        <span key={badge} className="badge">{badge}</span>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
-  );
-}
-
-/** 渲染 BackLink 组件，集中展示返回链接所需的数据、状态和操作入口。 */
-function BackLink() {
-  return (
-    <Link href="/" className="inline-flex items-center gap-2 text-sm text-slate-600">
-      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-      返回商品池
-    </Link>
-  );
-}
-
-/** 渲染 SectionTitle 组件，集中展示section标题所需的数据、状态和操作入口。 */
-function SectionTitle({
-  icon,
-  title,
-  subtitle,
-  tone,
-}: {
-  icon: ReactNode;
-  title: string;
-  subtitle: string;
-  tone: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${tone}`}>
-        {icon}
-      </div>
-      <div>
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <p className="text-sm text-slate-500">{subtitle}</p>
-      </div>
-    </div>
-  );
-}
-
-/** 渲染 StatusPill 组件，集中展示状态pill所需的数据、状态和操作入口。 */
-function StatusPill({ label, value, active }: { label: string; value: string; active: boolean }) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-white px-4 py-3">
-      <p className="text-xs text-slate-500">{label}</p>
-      <div className="mt-1 flex items-center gap-2">
-        <span className={`h-2 w-2 rounded-full ${active ? "bg-emerald-500" : "bg-slate-300"}`} />
-        <p className="text-sm font-semibold text-slate-900">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-/** 渲染 Notice 组件，集中展示notice所需的数据、状态和操作入口。 */
-function Notice({ ok, message }: { ok: boolean; message: string }) {
-  const Icon = ok ? CheckCircle2 : AlertCircle;
-  return (
-    <div
-      className={`flex items-start gap-3 rounded-md border p-4 text-sm ${
-        ok
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-rose-200 bg-rose-50 text-rose-800"
-      }`}
-    >
-      <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-      <span>{message}</span>
-    </div>
-  );
-}
-
-/** 渲染 TextInput 组件，集中展示文本input所需的数据、状态和操作入口。 */
-function TextInput({
-  label,
-  name,
-  defaultValue,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  defaultValue: string;
-  placeholder: string;
-}) {
-  return (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
-      <input
-        name={name}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-      />
-    </label>
   );
 }
 
@@ -464,16 +464,17 @@ function NumberInput({
   defaultValue: number;
 }) {
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
+    <div className="field">
+      <label htmlFor={`f-${name}`}>{label}</label>
       <input
+        id={`f-${name}`}
         name={name}
         type="number"
         min="1"
         defaultValue={defaultValue}
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+        className="input"
       />
-    </label>
+    </div>
   );
 }
 
@@ -488,52 +489,51 @@ function ProviderSelect({
   defaultValue: string;
 }) {
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
+    <div className="field">
+      <label htmlFor={`f-${name}`}>{label}</label>
       <select
+        id={`f-${name}`}
         name={name}
         defaultValue={defaultValue || "dashscope"}
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+        className="input"
       >
         <option value="dashscope">DashScope / 通义万相</option>
         <option value="jimeng">Jimeng / 即梦</option>
         <option value="custom">Custom</option>
       </select>
-    </label>
+    </div>
   );
 }
 
 /** 渲染 RoleSelect 组件，集中展示角色选择所需的数据、状态和操作入口。 */
 function RoleSelect() {
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">角色</span>
-      <select
-        name="role"
-        defaultValue="operator"
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-      >
+    <div className="field">
+      <label htmlFor="u-role">角色</label>
+      <select id="u-role" name="role" defaultValue="operator" className="input">
         <option value="owner">Owner</option>
         <option value="operator">Operator</option>
         <option value="viewer">Viewer</option>
       </select>
-    </label>
+    </div>
   );
 }
 
 /** 渲染 SecretInput 组件，集中展示secretinput所需的数据、状态和操作入口。 */
 function SecretInput({ label, name, masked }: { label: string; name: string; masked: string }) {
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
+    <div className="field is-wide">
+      <label htmlFor={`f-${name}`}>{label}</label>
       {/* 密钥输入框不回填明文，只显示脱敏占位；留空时后端保留原 key。 */}
       <input
+        id={`f-${name}`}
         name={name}
         type="password"
         placeholder={masked ? `当前：${masked}，留空则保持不变` : "粘贴 API Key"}
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+        className="input"
       />
-    </label>
+      <span className="hint">密钥从后端环境注入，不写入前端、不在页面上回显明文。</span>
+    </div>
   );
 }
 
@@ -542,11 +542,7 @@ function TestButton({ target, label }: { target: "text" | "image" | "video"; lab
   return (
     <form action="/settings/test" method="post">
       <input type="hidden" name="target" value={target} />
-      <button
-        type="submit"
-        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto"
-      >
-        <FlaskConical className="h-4 w-4" aria-hidden="true" />
+      <button type="submit" className="btn">
         {label}
       </button>
     </form>

@@ -120,7 +120,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
   return (
     <section className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.55fr)]">
       <div className="grid gap-6">
-        <div className="rounded-md border border-slate-200 bg-white p-6">
+        <div className="ios-card p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="flex items-center gap-2 text-emerald-700">
@@ -143,7 +143,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
             </button>
           </div>
           {error ? (
-            <div className="mt-4 flex items-start gap-2 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            <div className="mt-4 flex items-start gap-2 rounded-md border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
               <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
               {error}
             </div>
@@ -152,8 +152,8 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
 
         {latestRun ? (
           <>
-            <div className="rounded-md border border-slate-200 bg-white p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="ios-card p-6">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                     Run #{latestRun.id} · v{latestRun.workflow_version}
@@ -162,23 +162,23 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
                 </div>
                 <RunStatusBadge status={latestRun.status} />
               </div>
-              <div className="mt-5 grid gap-3 md:grid-cols-4">
+              <div className="mt-6 grid gap-2 md:grid-cols-4">
                 {specialistSteps.map((step) => {
                   const state = specialistState(latestRun, step.key);
                   const Icon = step.icon;
                   return (
-                    <div key={step.key} className="rounded-md border border-slate-200 p-4">
+                    <div key={step.key} className="ios-card p-4">
                       <div className="flex items-center justify-between">
                         <Icon className="h-5 w-5 text-slate-600" aria-hidden="true" />
                         <StepStateIcon state={state} />
                       </div>
-                      <p className="mt-3 text-sm font-semibold text-slate-900">{step.label}</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-900">{step.label}</p>
                       <p className="mt-1 text-xs text-slate-500">{stepStateLabel(state)}</p>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-5 flex flex-wrap gap-4 text-xs text-slate-500">
+              <div className="mt-6 flex flex-wrap gap-4 text-xs text-slate-500">
                 <span>返修 {latestRun.revision_count}/{latestRun.max_revisions}</span>
                 <span>模型调用 {numberValue(latestRun.usage.calls)} 次</span>
                 <span>Token {numberValue(latestRun.usage.total_tokens)}</span>
@@ -195,7 +195,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
                 <p className="mt-2 text-sm leading-6 text-amber-800/80">
                   可直接通过、编辑完整结构化草稿后通过，或驳回。本步骤不会自动执行投放或资金操作。
                 </p>
-                <label className="mt-5 block text-sm font-medium text-slate-700" htmlFor="agent-draft-json">
+                <label className="mt-6 block text-sm font-medium text-slate-700" htmlFor="agent-draft-json">
                   结构化草稿（可编辑）
                 </label>
                 <textarea
@@ -204,7 +204,7 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
                   onChange={(event) => setDraftJson(event.target.value)}
                   rows={20}
                   spellCheck={false}
-                  className="mt-2 w-full rounded-md border border-amber-200 bg-white p-3 font-mono text-xs leading-5 text-slate-800 outline-none focus:border-amber-500"
+                  className="mt-2 w-full rounded-md border border-amber-200 bg-white p-2 font-mono text-xs leading-5 text-slate-800 outline-none focus:border-amber-500"
                 />
                 <label className="mt-4 block text-sm font-medium text-slate-700" htmlFor="agent-review-note">
                   审核备注
@@ -213,10 +213,10 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
                   id="agent-review-note"
                   value={reviewNote}
                   onChange={(event) => setReviewNote(event.target.value)}
-                  className="mt-2 w-full rounded-md border border-amber-200 bg-white px-3 py-2 text-sm outline-none focus:border-amber-500"
+                  className="mt-2 w-full rounded-md border border-amber-200 bg-white px-2 py-2 text-sm outline-none focus:border-amber-500"
                   placeholder="可选：记录修改原因或驳回原因"
                 />
-                <div className="mt-4 flex flex-wrap gap-3">
+                <div className="mt-4 flex flex-wrap gap-2">
                   <ReviewButton disabled={submitting || !canEdit} onClick={() => submitReview("approve")}>
                     直接通过
                   </ReviewButton>
@@ -245,16 +245,16 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
       </div>
 
       <aside className="grid content-start gap-6">
-        <div className="rounded-md border border-slate-200 bg-white p-5">
+        <div className="ios-card p-6">
           <div className="flex items-center gap-2">
             <Clock3 className="h-4 w-4 text-slate-500" />
             <h3 className="font-semibold">运行轨迹</h3>
           </div>
-          <div className="mt-4 grid gap-3">
+          <div className="mt-4 grid gap-2">
             {latestEvents.length ? (
               latestEvents.map((event) => (
                 <div key={event.id} className="border-l-2 border-slate-200 pl-3">
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-slate-800">{eventLabel(event.event_type)}</p>
                     <span className="text-[11px] text-slate-400">{formatTime(event.created_at)}</span>
                   </div>
@@ -272,11 +272,11 @@ export function AgentRunPanel({ productId, initialRuns, canEdit }: AgentRunPanel
           </div>
         </div>
 
-        <div className="rounded-md border border-slate-200 bg-white p-5">
+        <div className="ios-card p-6">
           <h3 className="font-semibold">最近运行</h3>
           <div className="mt-4 grid gap-2">
             {runs.slice(0, 5).map((run) => (
-              <div key={run.id} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2.5">
+              <div key={run.id} className="flex items-center justify-between rounded-md bg-slate-50 px-2 py-2.5">
                 <div>
                   <p className="text-sm font-medium">Run #{run.id}</p>
                   <p className="mt-0.5 text-xs text-slate-400">{formatTime(run.created_at)}</p>
@@ -297,8 +297,8 @@ function QualityPanel({ run }: { run: AgentRun }) {
   const report = run.quality_report;
   if (typeof report.score !== "number") return null;
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-6">
-      <div className="flex items-center justify-between gap-3">
+    <div className="ios-card p-6">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-emerald-700" />
           <h3 className="text-lg font-semibold">质量审核</h3>
@@ -310,7 +310,7 @@ function QualityPanel({ run }: { run: AgentRun }) {
       <div className="mt-4 grid gap-2">
         {(report.issues ?? []).length ? (
           report.issues?.map((issue) => (
-            <div key={`${issue.code}-${issue.field}`} className="flex items-start gap-2 rounded-md bg-slate-50 px-3 py-2 text-sm">
+            <div key={`${issue.code}-${issue.field}`} className="flex items-start gap-2 rounded-md bg-slate-50 px-2 py-2 text-sm">
               {issue.severity === "error" ? (
                 <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
               ) : (
@@ -349,7 +349,7 @@ function RunStatusBadge({ status, compact = false }: { status: AgentRunStatus; c
         : status === "awaiting_review"
           ? "bg-amber-50 text-amber-700"
           : "bg-sky-50 text-sky-700";
-  return <span className={`rounded-md px-2.5 py-1 ${compact ? "text-[11px]" : "text-xs"} font-semibold ${color}`}>{labels[status]}</span>;
+  return <span className={`rounded-full px-2 py-1 ${compact ? "text-[11px]" : "text-xs"} font-semibold ${color}`}>{labels[status]}</span>;
 }
 
 /** 渲染 StepStateIcon 组件，集中展示stepstateicon所需的数据、状态和操作入口。 */

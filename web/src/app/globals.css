@@ -1,23 +1,224 @@
+/* 设计系统必须在 Tailwind 之前引入：让 Tailwind 工具类可以覆盖组件类（AGENTS.md §2.1）。
+   page-chrome.css 是 :80 四页合并后的页面级共享样式，同属共享层。 */
+@import "../styles/design-system.css";
+@import "../styles/page-chrome.css";
 @import "tailwindcss";
 
+/* ============================================================
+   旧 iOS Token 体系（浅色 / 深色，跟随 prefers-color-scheme）
+   仅服务于尚未换装的存量页面（agent / products / stores 等），
+   新换装页面一律走 design-system.css 的 token，两套体系不混用。
+   ============================================================ */
+
 :root {
-  --background: #f7f8fb;
-  --foreground: #0f172a;
-  --app-font-sans: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, Helvetica, sans-serif;
-  --app-font-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  /* iOS 语义色 */
+  --ios-bg: #f8f9fa;            /* 页面底色 grouped background */
+  --ios-surface: #ffffff;       /* 卡片面 */
+  --ios-surface-2: #f8f9fa;     /* 次级面（表头、内嵌块） */
+  --ios-fill: #edf2f7;          /* 填充（徽章、胶囊底） */
+  --ios-sep: #e2e8f0;           /* 分隔线 / 描边 */
+  --ios-text: #2d3748;          /* 主文字 label */
+  --ios-text-2: #718096;        /* 次级文字 secondaryLabel */
+  --ios-text-3: #a0aec0;        /* 三级文字 tertiaryLabel */
+
+  /* 作品集绿强调色（浅色模式 #42b983） */
+  --ios-accent: #42b983;
+  --ios-accent-strong: #38a16f;
+  --ios-accent-soft: #e7f6ef;
+  --ios-accent-border: #bfe6d4;
+
+  /* 语义色（iOS System Colors） */
+  --ios-green: #42b983;
+  --ios-green-deep: #38a16f;
+  --ios-green-soft: #e7f6ef;
+  --ios-green-border: #bfe6d4;
+  --ios-orange: #ff9500;
+  --ios-orange-deep: #b25000;
+  --ios-orange-soft: #fff3e0;
+  --ios-orange-border: #ffd9a6;
+  --ios-red: #ff3b30;
+  --ios-red-deep: #d70015;
+  --ios-red-soft: #ffe9e7;
+  --ios-red-border: #ffc4c0;
+  --ios-purple: #af52de;
+  --ios-purple-soft: #f6ebfd;
+  --ios-teal: #00a7bd;
+
+  /* 反差面（深色主按钮 / 深色 hero 卡，浅深模式均保持深色） */
+  --ios-contrast: #191817;
+  --ios-contrast-hover: #33302c;
+
+  /* 字体栈 */
+  --app-font-sans: system-ui, -apple-system, "Segoe UI", Roboto,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  --app-font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+
+  /* 旧变量兼容映射 */
+  --background: var(--ios-bg);
+  --foreground: var(--ios-text);
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ios-bg: #2d3748;
+    --ios-surface: #313e51;
+    --ios-surface-2: #3a4657;
+    --ios-fill: #3a4657;
+    --ios-sep: #3d4c63;
+    --ios-text: #edf2f7;
+    --ios-text-2: #a0aec0;
+    --ios-text-3: #718096;
+
+    /* 深色模式强调色 #48bb78 */
+    --ios-accent: #48bb78;
+    --ios-accent-strong: #68d391;
+    --ios-accent-soft: #1d3a2a;
+    --ios-accent-border: #2f5d41;
+
+    --ios-green: #48bb78;
+    --ios-green-deep: #48bb78;
+    --ios-green-soft: #1d3a2a;
+    --ios-green-border: #2f5d41;
+    --ios-orange: #ff9f0a;
+    --ios-orange-deep: #ff9f0a;
+    --ios-orange-soft: #2d2214;
+    --ios-orange-border: #57431f;
+    --ios-red: #ff453a;
+    --ios-red-deep: #ff453a;
+    --ios-red-soft: #321715;
+    --ios-red-border: #59312e;
+    --ios-purple: #bf5af2;
+    --ios-purple-soft: #2b1f38;
+    --ios-teal: #4dd5e8;
+
+    --ios-contrast: #3a4657;
+    --ios-contrast-hover: #445165;
+  }
+}
+
+/* ============================================================
+   Tailwind v4 token 重映射：让存量工具类直接呈现 iOS 色板
+   ============================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--ios-bg);
+  --color-foreground: var(--ios-text);
   --font-sans: var(--app-font-sans);
   --font-mono: var(--app-font-mono);
+
+  /* 中性色 */
+  --color-slate-50: var(--ios-surface-2);
+  --color-slate-100: var(--ios-fill);
+  --color-slate-200: var(--ios-sep);
+  --color-slate-300: var(--ios-sep);
+  --color-slate-400: var(--ios-text-3);
+  --color-slate-500: var(--ios-text-2);
+  --color-slate-600: var(--ios-text-2);
+  --color-slate-700: var(--ios-text);
+  --color-slate-800: var(--ios-contrast-hover);
+  --color-slate-900: var(--ios-contrast);
+  --color-slate-950: var(--ios-contrast);
+
+  /* 强调色（蓝） */
+  --color-cyan-50: var(--ios-accent-soft);
+  --color-cyan-100: var(--ios-accent-soft);
+  --color-cyan-200: var(--ios-accent-border);
+  --color-cyan-300: var(--ios-accent-border);
+  --color-cyan-600: var(--ios-accent);
+  --color-cyan-700: var(--ios-accent);
+  --color-cyan-800: var(--ios-accent-strong);
+  --color-sky-50: var(--ios-accent-soft);
+  --color-sky-100: var(--ios-accent-soft);
+  --color-sky-500: var(--ios-accent);
+  --color-sky-700: var(--ios-accent);
+  --color-sky-900: var(--ios-accent-strong);
+
+  /* 成功（绿） */
+  --color-emerald-50: var(--ios-green-soft);
+  --color-emerald-100: var(--ios-green-soft);
+  --color-emerald-200: var(--ios-green-border);
+  --color-emerald-500: var(--ios-green);
+  --color-emerald-600: var(--ios-green);
+  --color-emerald-700: var(--ios-green-deep);
+  --color-emerald-800: var(--ios-green-deep);
+
+  /* 警示（橙） */
+  --color-amber-50: var(--ios-orange-soft);
+  --color-amber-100: var(--ios-orange-soft);
+  --color-amber-200: var(--ios-orange-border);
+  --color-amber-500: var(--ios-orange);
+  --color-amber-700: var(--ios-orange-deep);
+  --color-amber-800: var(--ios-orange-deep);
+  --color-amber-900: var(--ios-orange-deep);
+
+  /* 危险（红） */
+  --color-rose-50: var(--ios-red-soft);
+  --color-rose-100: var(--ios-red-soft);
+  --color-rose-200: var(--ios-red-border);
+  --color-rose-500: var(--ios-red);
+  --color-rose-600: var(--ios-red);
+  --color-rose-700: var(--ios-red-deep);
+  --color-rose-800: var(--ios-red-deep);
+
+  /* 紫色 */
+  --color-violet-100: var(--ios-purple-soft);
+  --color-violet-300: var(--ios-purple);
+  --color-violet-600: var(--ios-purple);
+  --color-violet-700: var(--ios-purple);
+
+  /* 圆角：与设计系统 --radius 对齐 */
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
 }
 
+/* bg-white 优先于 token 重映射：卡片面统一走 --ios-surface（深色模式自动变深） */
+@layer utilities {
+  .bg-white {
+    background-color: var(--ios-surface);
+  }
+  .bg-\[\#f7f8fb\],
+  .bg-\[\#f6f8fb\] {
+    background-color: var(--ios-bg);
+  }
+
+  /* slate 深色阶同时用于文字与底色，按用途分别映射 */
+  .text-slate-800,
+  .text-slate-900,
+  .text-slate-950 {
+    color: var(--ios-text);
+  }
+  .text-slate-300,
+  .text-slate-400 {
+    color: var(--ios-text-3);
+  }
+  .bg-slate-900,
+  .bg-slate-950 {
+    background-color: var(--ios-contrast);
+  }
+  .bg-slate-800 {
+    background-color: var(--ios-contrast-hover);
+  }
+  .hover\:bg-slate-800:hover,
+  .hover\:bg-slate-900:hover {
+    background-color: var(--ios-contrast-hover);
+  }
+  .text-cyan-300 {
+    color: var(--ios-accent);
+  }
+}
+
+/* ============================================================
+   基础（未换装页面的兜底；换装页面的视觉由 design-system.css 决定）
+   ============================================================ */
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--app-font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -25,4 +226,31 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+/* ============================================================
+   旧 iOS 卡片：仅存量页面继续使用；投影走 --shadow-card 唯一令牌
+   ============================================================ */
+@layer components {
+  .ios-card {
+    background-color: var(--ios-surface);
+    border: 1px solid var(--ios-sep);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .ios-card:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* 输入控件圆角统一走设计系统令牌 */
+input,
+select,
+textarea {
+  border-radius: var(--radius);
 }

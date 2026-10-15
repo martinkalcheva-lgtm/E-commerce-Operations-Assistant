@@ -1,0 +1,215 @@
+/* ==========================================================================
+   /agent 页面级样式（对照 _design/zhao/designs/agent.html 的 <style> 块）
+   --------------------------------------------------------------------------
+   · 全部选择器作用域限定在 .pg-agent 根节点下，避免跨页类名冲突
+   · 只消费 design-system.css / page-chrome.css 的 token 与组件类，
+     不新增颜色/圆角/阴影/字体（视觉值一律 var(--)）
+   · 设计稿声明带 .ribbon 与「修复对照」表属设计稿自述脚手架，不落地
+   ========================================================================== */
+
+/* 区块锚点落点：吸顶栏 60px + 余量 */
+.pg-agent .sec { scroll-margin-top: 76px; }
+
+/* ---- 文字工具 ---------------------------------------------------------- */
+.pg-agent .hint { font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.7; color: var(--faint); min-width: 0; overflow-wrap: anywhere; }
+.pg-agent .hint code, .pg-agent .hint .k { color: var(--accent); }
+
+/* ---- 表单 -------------------------------------------------------------- */
+.pg-agent .input, .pg-agent select.input, .pg-agent textarea.input { width: 100%; min-height: 44px; }
+.pg-agent textarea.input { min-height: 7rem; }
+.pg-agent textarea.input.is-code { font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.7; min-height: 11rem; }
+.pg-agent .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-agent .form-stack { display: flex; flex-direction: column; gap: var(--sp-4); }
+/* 覆盖 page-chrome 的 model-config 版 form-actions（无上边线的行内版） */
+.pg-agent .form-actions { padding-top: 0; margin-top: 0; border-top: 0; align-items: center; }
+
+/* ---- 页头 --------------------------------------------------------------- */
+.pg-agent .page-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-4) var(--sp-5); align-items: start;
+  padding-bottom: var(--sp-4); border-bottom: 1px solid var(--border); margin-bottom: var(--sp-5);
+}
+.pg-agent .page-head .eyebrow { display: inline-flex; align-items: center; gap: .4em; color: var(--accent); }
+.pg-agent .page-head h1 { font-size: var(--fs-h1); margin-top: .5rem; }
+.pg-agent .page-head .t-lead { margin-top: var(--sp-2); }
+.pg-agent .ph-ctl { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; flex-wrap: wrap; }
+.pg-agent .ws-switch { display: flex; align-items: center; gap: .5rem; }
+.pg-agent .ws-switch .input { width: auto; max-width: 15rem; }
+.pg-agent .whoami {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 44px; padding: .3rem var(--sp-3);
+  border: 1px solid var(--border-strong); border-radius: var(--radius);
+}
+.pg-agent .whoami b { font-size: var(--fs-meta); line-height: 1.5; }
+.pg-agent .whoami .mono { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); }
+
+/* ---- 指标（4 列版；基类复用 page-chrome 的 .kpi） ------------------------ */
+.pg-agent .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+
+/* ---- 锚点导航 ------------------------------------------------------------ */
+.pg-agent .anchors {
+  display: flex; flex-wrap: wrap; gap: .25rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+  padding: .25rem; margin-bottom: var(--sp-5);
+}
+.pg-agent .anchors a {
+  display: inline-flex; align-items: center; gap: .375rem; min-height: 44px;
+  padding: .4rem .7rem; border-radius: var(--radius);
+  font-size: var(--fs-meta); font-weight: 600; color: var(--muted);
+  transition: color var(--t-2) var(--ease-state), background-color var(--t-2) var(--ease-state);
+}
+.pg-agent .anchors a:hover { background: var(--surface-subtle); color: var(--fg); }
+.pg-agent .anchors a[aria-current="true"] { background: var(--surface-subtle); color: var(--fg); }
+.pg-agent .anchors .n { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-agent .anchors a[aria-current="true"] .n { color: var(--accent); }
+
+/* ---- Agent 入口 + Harness 边界 -------------------------------------------- */
+.pg-agent .entry-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--sp-5); align-items: start; }
+.pg-agent .panel-head-lead { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-4); }
+.pg-agent .panel-head-lead h3, .pg-agent .panel-head-lead h2 { font-size: var(--fs-h3); }
+.pg-agent .panel-head-lead p { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; margin-top: .25rem; }
+.pg-agent .harness .panel-body { display: flex; flex-direction: column; gap: var(--sp-4); }
+.pg-agent .harness h3 { font-size: var(--fs-h3); }
+.pg-agent .harness-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-agent .hg { border: 1px solid color-mix(in oklch, var(--bg) 22%, transparent); border-radius: var(--radius); padding: var(--sp-3); }
+.pg-agent .hg b { display: block; font-size: var(--fs-meta); color: var(--bg); }
+.pg-agent .hg span {
+  display: block; margin-top: .25rem;
+  font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.6;
+  color: color-mix(in oklch, var(--bg) 62%, var(--fg));
+}
+
+/* ---- 工作流模板 ------------------------------------------------------------ */
+.pg-agent .wf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+.pg-agent .wf { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4); }
+.pg-agent .wf-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-3); }
+.pg-agent .wf-icon {
+  width: 36px; height: 36px; flex: none; display: grid; place-items: center;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-sunken); color: var(--fg-secondary); font-size: 18px;
+}
+.pg-agent .wf h3 { font-size: var(--fs-h3); }
+.pg-agent .wf-key { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-agent .wf-desc { font-size: var(--fs-body); line-height: 1.7; color: var(--muted); flex: 1; }
+.pg-agent .wf-block { display: flex; flex-direction: column; gap: .375rem; }
+.pg-agent .wf-block > span { font-family: var(--font-mono); font-size: var(--fs-mini); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+
+/* ---- 任务中心 ---------------------------------------------------------------- */
+.pg-agent .task-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.pg-agent .task { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.pg-agent .task[open] { border-color: var(--border-strong); }
+.pg-agent .task > summary { display: block; min-height: 44px; padding: var(--sp-3) var(--sp-4); cursor: pointer; list-style: none; }
+.pg-agent .task > summary::-webkit-details-marker { display: none; }
+.pg-agent .task-row { display: grid; grid-template-columns: minmax(0, 1fr) 10rem 12rem; gap: var(--sp-3); align-items: center; }
+.pg-agent .task-title { display: flex; align-items: center; gap: .625rem; font-size: var(--fs-body); font-weight: 600; }
+.pg-agent .task-id { font-family: var(--font-mono); font-weight: 400; color: var(--faint); }
+.pg-agent .task-sub { display: block; margin-top: .25rem; padding-left: 1.4rem; font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.6; color: var(--faint); }
+.pg-agent .task-elapsed { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--fg-secondary); text-align: right; }
+.pg-agent .task-elapsed em { display: block; font-style: normal; color: var(--faint); }
+.pg-agent .task-badges { display: flex; justify-content: flex-end; gap: .375rem; flex-wrap: wrap; }
+.pg-agent .task-body {
+  display: flex; flex-direction: column; gap: var(--sp-4);
+  padding: var(--sp-4); margin-top: var(--sp-2); border-top: 1px solid var(--border);
+}
+.pg-agent .json-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-agent .json-box { min-width: 0; padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-sunken); }
+.pg-agent .json-box h4, .pg-agent .json-box h3 { font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.pg-agent .json-box pre {
+  margin-top: .5rem; max-height: 14rem; overflow: auto; white-space: pre-wrap;
+  font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.7; color: var(--fg-secondary);
+}
+.pg-agent .meter-row { display: flex; flex-wrap: wrap; gap: .375rem var(--sp-4); font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); }
+.pg-agent .issue { display: flex; align-items: flex-start; gap: .5rem; padding: var(--sp-2) var(--sp-3); border-radius: var(--radius); background: var(--surface-subtle); font-size: var(--fs-meta); color: var(--fg-secondary); }
+.pg-agent .trace-dot.fail { background: var(--accent); }
+
+/* ---- 审批收件箱 ------------------------------------------------------------------ */
+.pg-agent .approval-wrap { display: flex; flex-direction: column; gap: var(--sp-4); }
+.pg-agent .approval {
+  display: flex; flex-direction: column; gap: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--warn); border-left: 3px solid var(--warn);
+  border-radius: var(--radius); background: var(--warn-tint);
+}
+.pg-agent .approval-hd { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; }
+.pg-agent .approval-hd h3 { font-size: var(--fs-h3); }
+.pg-agent .approval-sub { margin-top: .25rem; font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); }
+.pg-agent .approval-meta { display: flex; align-items: center; gap: .375rem; flex-wrap: wrap; justify-content: flex-end; }
+.pg-agent .decide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border); }
+.pg-agent .decide-card { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.pg-agent .decide-card h4 { font-size: var(--fs-meta); }
+.pg-agent .decide-card .lead { font-size: var(--fs-body); line-height: 1.7; color: var(--muted); }
+.pg-agent .decide-stack { display: flex; flex-direction: column; gap: var(--sp-2); }
+.pg-agent .impact { display: flex; flex-direction: column; gap: .375rem; padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.pg-agent .impact li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: .625rem; align-items: start; font-size: var(--fs-body); line-height: 1.7; color: var(--fg-secondary); }
+.pg-agent .impact .ic { color: var(--muted); margin-top: .35em; }
+
+/* ---- 结构化记忆 --------------------------------------------------------------------- */
+.pg-agent .mem-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: var(--sp-5); align-items: start; }
+.pg-agent .mem-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-agent .mem { display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--radius); }
+.pg-agent .mem.is-off { background: var(--surface-sunken); border-style: dashed; }
+.pg-agent .mem-hd { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); flex-wrap: wrap; }
+.pg-agent .mem-key { font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-meta); }
+.pg-agent .mem-scope { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-agent .mem pre {
+  padding: var(--sp-3); border-radius: var(--radius); background: var(--surface-subtle);
+  white-space: pre-wrap; overflow: auto; max-height: 10rem;
+  font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.7; color: var(--fg-secondary);
+}
+
+/* ---- Agent 目录 ---------------------------------------------------------------------- */
+.pg-agent .cat-coord { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4); align-items: center; margin-bottom: var(--sp-4); }
+.pg-agent .cat-coord h3 { font-size: var(--fs-h2); }
+.pg-agent .cat-coord .k { display: block; font-family: var(--font-mono); font-size: var(--fs-mini); color: color-mix(in oklch, var(--bg) 66%, var(--fg)); }
+.pg-agent .cat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-agent .cat { display: flex; flex-direction: column; gap: .375rem; padding: var(--sp-4); border: 1px solid var(--border); border-radius: var(--radius); }
+.pg-agent .cat .key { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-agent .cat b { font-size: var(--fs-meta); }
+.pg-agent .cat .ver { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--accent); }
+.pg-agent .cat p { font-size: var(--fs-body); line-height: 1.7; color: var(--muted); flex: 1; }
+.pg-agent .cat .tools { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+
+/* ---- 空态 / 边界态 ---------------------------------------------------------------------- */
+.pg-agent .empty-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+.pg-agent .empty .ic { color: var(--faint); }
+.pg-agent .empty h4, .pg-agent .empty h3 { margin-top: var(--sp-3); color: var(--fg); }
+.pg-agent .empty h3 { font-size: var(--fs-h3); margin-bottom: .375rem; }
+.pg-agent .empty p { color: var(--muted); }
+.pg-agent .bound-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); margin-top: var(--sp-4); }
+.pg-agent .bound { display: flex; flex-direction: column; gap: var(--sp-3); }
+.pg-agent .bound .panel { flex: 1; }
+
+/* ---- 提示块变体（page-chrome .alert 基类已就绪，这里补 agent 语义变体） -------------------- */
+.pg-agent .alert.is-ok { border-color: var(--success); background: var(--success-tint); }
+.pg-agent .alert.is-ok .ic, .pg-agent .alert.is-ok b { color: var(--success); }
+.pg-agent .alert.is-bad { border-color: var(--accent); background: var(--accent-tint); }
+.pg-agent .alert.is-bad .ic, .pg-agent .alert.is-bad b { color: var(--accent); }
+.pg-agent .alert.is-lock { border-color: var(--border-strong); background: var(--surface-sunken); }
+
+/* ---- 响应式 ---------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+  .pg-agent .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pg-agent .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1023px) {
+  .pg-agent .page-head { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .ph-ctl { justify-content: flex-start; }
+  .pg-agent .entry-grid, .pg-agent .mem-grid, .pg-agent .decide, .pg-agent .json-2, .pg-agent .harness-grid { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .wf-grid { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .empty-grid, .pg-agent .bound-grid, .pg-agent .mem-list { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .task-row { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .task-badges { justify-content: flex-start; }
+  .pg-agent .task-elapsed { text-align: left; }
+  .pg-agent .cat-coord { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .pg-agent .kpi-grid, .pg-agent .cat-grid { grid-template-columns: minmax(0, 1fr); }
+  .pg-agent .anchors { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .pg-agent .anchors::-webkit-scrollbar { display: none; }
+  .pg-agent .anchors a { flex: 0 0 auto; }
+  .pg-agent .task > summary { padding: var(--sp-3); }
+  .pg-agent .task-body { padding: var(--sp-3); }
+}
+
+/* ---- sec-hd 右侧操作组 ---- */
+.pg-agent .sec-hd-end { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }

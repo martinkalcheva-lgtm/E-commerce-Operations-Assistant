@@ -1,23 +1,14 @@
-import {
-  AlertTriangle,
-  ArrowLeft,
-  ArrowRight,
-  Boxes,
-  CheckCircle2,
-  ClipboardList,
-  Package,
-  Store as StoreIcon,
-  Warehouse,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { InventoryAdvicePanel } from "@/components/inventory-advice-panel";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { getCurrentUser, getProducts, getStore, getStoreInventoryMovements, getStoreInventorySummary } from "@/lib/api";
 import { getAuthToken } from "@/lib/session";
 import type { StoreInventoryMovementRow, StoreInventoryRow } from "@/types";
 import type { Platform, Product } from "@/types";
+
+import "./page.store.css";
 
 const platformLabels: Record<Platform, string> = {
   douyin: "抖音",
@@ -61,235 +52,285 @@ export default async function StorePage({ params, searchParams }: StorePageProps
   const canEdit = Boolean(currentUser?.permissions.can_edit);
 
   return (
-    <main className="min-h-screen bg-[#f7f8fb] px-5 py-6 text-slate-950 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <div>
-          <Link
-            href="/"
-            className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            返回工作台
-          </Link>
+    <div className="app pg-store">
+      <header className="app-top">
+        <div className="brand">
+          <span className="mark-slot" aria-hidden="true">
+            <svg className="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <rect x="12" y="12" width="8" height="8" rx="2" />
+              <rect x="4" y="4" width="4" height="4" rx="1" />
+              <rect x="24" y="4" width="4" height="4" rx="1" />
+              <rect x="4" y="24" width="4" height="4" rx="1" />
+              <rect x="24" y="24" width="4" height="4" rx="1" />
+            </svg>
+          </span>
+          <span>运营智能体</span>
+          <span className="sub">STORES / :id</span>
         </div>
+        <nav aria-label="页面导航">
+          <Link href="/">工作台</Link>
+          <Link href="/imports">导入中心</Link>
+          <Link href={`/stores/${store.id}`} aria-current="page">店铺详情</Link>
+        </nav>
+        <div className="top-actions">
+          <ThemeToggle />
+        </div>
+      </header>
 
-        <header className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-cyan-700 text-white">
-                <StoreIcon className="h-6 w-6" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-cyan-700">{platformLabels[store.platform]}</p>
-                <h1 className="mt-1 text-2xl font-semibold tracking-normal text-slate-950">{store.name}</h1>
-                <p className="mt-2 text-sm text-slate-500">
-                  {store.owner_name ? `负责人：${store.owner_name}` : "未设置负责人"}
-                </p>
-              </div>
-            </div>
-            <span className="inline-flex h-8 w-fit items-center rounded-md bg-slate-100 px-3 text-xs font-medium text-slate-600">
-              {store.status === "active" ? "启用" : store.status === "paused" ? "暂停" : "关闭"}
-            </span>
-          </div>
-        </header>
+      <main className="app-body">
+        <div className="pane">
+          <div className="wrap stack-5">
 
-        <section className="grid gap-4 md:grid-cols-4">
-          <MetricCard label="店铺商品" value={storeProducts.length} icon={Package} />
-          <MetricCard label="在营商品" value={activeProducts} icon={Boxes} />
-          <MetricCard label="待补平台映射" value={unmappedProducts} icon={ArrowRight} />
-          <MetricCard label="可用库存" value={inventorySummary?.total_available_quantity ?? 0} icon={Warehouse} />
-        </section>
-
-        <StoreWorkflowPanel steps={workflowSteps} />
-
-        {lowStockRows.length > 0 ? (
-          <section className="rounded-md border border-amber-200 bg-amber-50 p-5">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="flex gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-800">
-                  <AlertTriangle className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
-                  <h2 className="text-base font-semibold text-slate-950">库存异常提示</h2>
-                  <p className="mt-1 text-sm text-amber-900">
-                    {lowStockRows.length} 个 SKU 可用库存已低于或等于预警线，建议优先补货或调整投放节奏。
-                  </p>
-                </div>
-              </div>
-              <Link
-                href={`/stores/${store.id}?inventory=low`}
-                className="inline-flex h-9 w-fit items-center rounded-md bg-amber-900 px-3 text-sm font-medium text-white hover:bg-amber-800"
-              >
-                只看低库存
+            {/* ============ 店铺身份 ============ */}
+            <header className="sec" style={{ marginBottom: 0 }}>
+              <Link href="/" className="back">
+                <svg className="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-r"></use></svg>
+                返回工作台
               </Link>
-            </div>
-            <div className="mt-4 grid gap-2 md:grid-cols-2">
-              {lowStockRows.slice(0, 4).map((row) => (
+              <div className="store-hd" style={{ marginTop: "var(--sp-3)" }}>
+                <div className="store-id">
+                  <span className="store-mark" aria-hidden="true">
+                    <svg className="ic ic-lg" aria-hidden="true" focusable="false"><use href="#i-server"></use></svg>
+                  </span>
+                  <div>
+                    <span className="eyebrow">{platformLabels[store.platform]}</span>
+                    <h1 className="t-h2" style={{ marginTop: ".25rem" }}>{store.name}</h1>
+                    <p className="cap" style={{ marginTop: ".375rem" }}>
+                      {store.owner_name ? `负责人：${store.owner_name}` : "未设置负责人"}
+                    </p>
+                  </div>
+                </div>
+                <div className="store-actions">
+                  <span className={`badge ${store.status === "active" ? "badge-online" : "badge"}`}>
+                    {store.status === "active" ? "启用" : store.status === "paused" ? "暂停" : "关闭"}
+                  </span>
+                  <Link href={`/?store=${store.id}`} className="btn btn-sm">回首页筛选</Link>
+                </div>
+              </div>
+            </header>
+
+            {/* ============ KPI ============ */}
+            <section className="sec" style={{ marginBottom: 0 }}>
+              <div className="kpi-grid">
+                <article className="kpi">
+                  <span className="kpi-lbl">店铺商品</span>
+                  <span className="kpi-val">{storeProducts.length}</span>
+                </article>
+                <article className="kpi">
+                  <span className="kpi-lbl">在营商品</span>
+                  <span className="kpi-val">{activeProducts}</span>
+                </article>
+                <article className={`kpi ${unmappedProducts > 0 ? "is-idle" : ""}`}>
+                  <span className="kpi-lbl">待补平台映射</span>
+                  <span className="kpi-val">{unmappedProducts}</span>
+                </article>
+                <article className="kpi is-lead">
+                  <span className="kpi-lbl">可用库存</span>
+                  <span className="kpi-val">{inventorySummary?.total_available_quantity ?? 0}</span>
+                </article>
+              </div>
+            </section>
+
+            <StoreWorkflowPanel steps={workflowSteps} />
+
+            {/* ============ 库存异常提示 ============ */}
+            {lowStockRows.length > 0 ? (
+              <section className="alert" role="alert">
+                <div className="alert-hd">
+                  <svg className="alert-ic" aria-hidden="true" focusable="false"><use href="#i-warn"></use></svg>
+                  <div>
+                    <h3>库存异常提示</h3>
+                    <p>
+                      {lowStockRows.length} 个 SKU 可用库存已低于或等于预警线，建议优先补货或调整投放节奏。
+                    </p>
+                  </div>
+                </div>
                 <Link
-                  key={row.sku_id}
-                  href={`/products/${row.product_id}?tab=overview`}
-                  className="rounded-md border border-amber-200 bg-white px-3 py-2 text-sm hover:bg-amber-50"
+                  href={`/stores/${store.id}?inventory=low`}
+                  className="btn"
                 >
-                  <span className="font-medium text-slate-950">{row.product_name}</span>
-                  <span className="ml-2 text-slate-600">{row.sku_code}</span>
-                  <span className="ml-2 text-amber-800">可用 {row.available_quantity}</span>
+                  只看低库存
                 </Link>
-              ))}
-            </div>
-          </section>
-        ) : null}
+                <div className="sku-chips">
+                  {lowStockRows.slice(0, 4).map((row) => (
+                    <Link
+                      key={row.sku_id}
+                      href={`/products/${row.product_id}?tab=overview`}
+                      className="sku-chip"
+                    >
+                      <span className="nm">{row.product_name}</span>
+                      <span className="mono-faint">{row.sku_code}</span>
+                      <span className="qty">可用 {row.available_quantity}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-        <InventoryWorkflowPanel storeId={store.id} inventoryRows={inventorySummary?.rows ?? []} lowStockRows={lowStockRows} />
+            <InventoryWorkflowPanel storeId={store.id} inventoryRows={inventorySummary?.rows ?? []} lowStockRows={lowStockRows} />
 
-        <InventoryAdvicePanel storeId={store.id} canEdit={canEdit} />
+            <InventoryAdvicePanel storeId={store.id} canEdit={canEdit} />
 
-        <section className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">店铺商品</h2>
-              <p className="mt-1 text-sm text-slate-500">从店铺维度进入单品运营闭环</p>
-            </div>
-            <Link
-              href={`/?store=${store.id}`}
-              className="inline-flex h-9 items-center rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              回首页筛选
-            </Link>
-          </div>
-
-          <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
-            <div className="hidden grid-cols-[1.4fr_0.8fr_0.8fr_1fr_96px] bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500 lg:grid">
-              <span>商品</span>
-              <span>平台状态</span>
-              <span>售价</span>
-              <span>卖点</span>
-              <span>动作</span>
-            </div>
-            {storeProducts.length === 0 ? (
-              <div className="px-4 py-12 text-center text-sm text-slate-500">
-                这个店铺还没有绑定商品，可以回到首页创建商品并选择该店铺。
+            {/* ============ 店铺商品 ============ */}
+            <section className="sec">
+              <div className="sec-hd">
+                <div>
+                  <span className="eyebrow">Store Products</span>
+                  <h2>店铺商品</h2>
+                  <p className="cap" style={{ marginTop: ".25rem" }}>从店铺维度进入单品运营闭环</p>
+                </div>
+                <div className="sec-hd-end">
+                  <span className="badge">{storeProducts.length} 个商品</span>
+                </div>
               </div>
-            ) : (
-              <div className="divide-y divide-slate-200">
-                {storeProducts.map((product) => (
-                  <StoreProductRow key={product.id} product={product} />
-                ))}
+
+              <div className="panel">
+                {storeProducts.length === 0 ? (
+                  <div className="panel-body">
+                    <div className="empty">
+                      <h3>还没有绑定商品</h3>
+                      <p>这个店铺还没有绑定商品，可以回到首页创建商品并选择该店铺。</p>
+                      <div className="empty-actions">
+                        <Link href={`/?store=${store.id}`} className="btn btn-primary">去创建商品</Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="tbl-wrap">
+                    <table className="tbl tbl-scroll-sm">
+                      <caption className="sr-only">店铺商品列表</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">商品</th>
+                          <th scope="col">平台状态</th>
+                          <th scope="col">售价</th>
+                          <th scope="col">卖点</th>
+                          <th scope="col">动作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {storeProducts.map((product) => (
+                          <StoreProductRow key={product.id} product={product} />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </section>
+            </section>
 
-        <section className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">库存概览</h2>
-              <p className="mt-1 text-sm text-slate-500">按 SKU 汇总库存、锁定量、可用量和低库存风险</p>
-            </div>
-            <span className="inline-flex h-8 items-center rounded-md bg-slate-100 px-3 text-xs font-medium text-slate-600">
-              低库存 {inventorySummary?.low_stock_count ?? 0}
-            </span>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link
-              href={`/stores/${store.id}`}
-              className={`inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium ${
-                query.inventory === "low"
-                  ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  : "border-cyan-700 bg-cyan-700 text-white"
-              }`}
-            >
-              全部库存
-            </Link>
-            <Link
-              href={`/stores/${store.id}?inventory=low`}
-              className={`inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium ${
-                query.inventory === "low"
-                  ? "border-cyan-700 bg-cyan-700 text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              低库存
-            </Link>
-          </div>
-
-          <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
-            <div className="hidden grid-cols-[1.2fr_0.9fr_0.7fr_0.7fr_0.7fr_0.8fr] bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500 lg:grid">
-              <span>SKU</span>
-              <span>商品</span>
-              <span>现货</span>
-              <span>锁定</span>
-              <span>可用</span>
-              <span>状态</span>
-            </div>
-            {!inventorySummary || inventoryRows.length === 0 ? (
-              <div className="px-4 py-12 text-center text-sm text-slate-500">
-                {query.inventory === "low"
-                  ? "当前没有低库存 SKU。"
-                  : "这个店铺还没有 SKU 库存数据，后续可从商品详情创建 SKU 并登记库存。"}
+            {/* ============ 库存概览 ============ */}
+            <section className="sec">
+              <div className="sec-hd">
+                <div>
+                  <span className="eyebrow">Inventory</span>
+                  <h2>库存概览</h2>
+                  <p className="cap" style={{ marginTop: ".25rem" }}>按 SKU 汇总库存、锁定量、可用量和低库存风险</p>
+                </div>
+                <div className="sec-hd-end">
+                  <span className="badge badge-warn">低库存 {inventorySummary?.low_stock_count ?? 0}</span>
+                </div>
               </div>
-            ) : (
-              <div className="divide-y divide-slate-200">
-                {inventoryRows.map((row) => (
-                  <InventoryRow key={row.sku_id} row={row} />
-                ))}
+
+              <div className="tabs" role="tablist" aria-label="库存筛选">
+                <Link
+                  href={`/stores/${store.id}`}
+                  className="tab"
+                  aria-selected={query.inventory === "low" ? "false" : "true"}
+                >
+                  全部库存
+                </Link>
+                <Link
+                  href={`/stores/${store.id}?inventory=low`}
+                  className="tab"
+                  aria-selected={query.inventory === "low" ? "true" : "false"}
+                >
+                  低库存 <span className="n">{inventorySummary?.low_stock_count ?? 0}</span>
+                </Link>
               </div>
-            )}
-          </div>
-        </section>
 
-        <section className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">库存流水</h2>
-              <p className="mt-1 text-sm text-slate-500">集中查看店铺最近库存变化</p>
-            </div>
-            <span className="inline-flex h-8 items-center rounded-md bg-slate-100 px-3 text-xs font-medium text-slate-600">
-              最近 {inventoryMovements.length}
-            </span>
-          </div>
-
-          <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
-            <div className="hidden grid-cols-[0.8fr_1fr_0.9fr_0.7fr_0.7fr_1fr] bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500 lg:grid">
-              <span>类型</span>
-              <span>商品</span>
-              <span>SKU</span>
-              <span>现货变化</span>
-              <span>锁定变化</span>
-              <span>原因</span>
-            </div>
-            {inventoryMovements.length === 0 ? (
-              <div className="px-4 py-10 text-center text-sm text-slate-500">暂无库存流水。</div>
-            ) : (
-              <div className="divide-y divide-slate-200">
-                {inventoryMovements.map((movement) => (
-                  <InventoryMovementRow key={movement.id} movement={movement} />
-                ))}
+              <div className="panel">
+                {!inventorySummary || inventoryRows.length === 0 ? (
+                  <div className="panel-body">
+                    <div className="empty">
+                      <h3>{query.inventory === "low" ? "当前没有低库存 SKU" : "暂无 SKU 库存数据"}</h3>
+                      <p>这个店铺还没有 SKU 库存数据，后续可从商品详情创建 SKU 并登记库存。</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="tbl-wrap">
+                    <table className="tbl tbl-scroll">
+                      <caption className="sr-only">SKU 库存汇总</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">SKU</th>
+                          <th scope="col">商品</th>
+                          <th scope="col">现货</th>
+                          <th scope="col">锁定</th>
+                          <th scope="col">可用</th>
+                          <th scope="col">状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventoryRows.map((row) => (
+                          <InventoryRow key={row.sku_id} row={row} />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </section>
-      </div>
-    </main>
-  );
-}
+            </section>
 
-/** 渲染 MetricCard 组件，集中展示指标卡片所需的数据、状态和操作入口。 */
-function MetricCard({
-  label,
-  value,
-  icon: Icon,
-}: {
-  label: string;
-  value: number | string;
-  icon: LucideIcon;
-}) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-white p-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-slate-500">{label}</p>
-        <Icon className="h-4 w-4 text-slate-400" aria-hidden="true" />
-      </div>
-      <p className="mt-2 text-xl font-semibold text-slate-950">{value}</p>
+            {/* ============ 库存流水 ============ */}
+            <section className="sec">
+              <div className="sec-hd">
+                <div>
+                  <span className="eyebrow">Movements</span>
+                  <h2>库存流水</h2>
+                  <p className="cap" style={{ marginTop: ".25rem" }}>集中查看店铺最近库存变化</p>
+                </div>
+                <div className="sec-hd-end">
+                  <span className="badge">最近 {inventoryMovements.length}</span>
+                </div>
+              </div>
+
+              <div className="panel">
+                {inventoryMovements.length === 0 ? (
+                  <div className="panel-body">
+                    <div className="empty">
+                      <h3>暂无库存流水</h3>
+                      <p>入库、出库、盘点、锁定与释放都会在这里留下记录。</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="tbl-wrap">
+                    <table className="tbl tbl-scroll">
+                      <caption className="sr-only">库存流水记录</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">类型</th>
+                          <th scope="col">商品</th>
+                          <th scope="col">SKU</th>
+                          <th scope="col">现货变化</th>
+                          <th scope="col">锁定变化</th>
+                          <th scope="col">原因</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventoryMovements.map((movement) => (
+                          <InventoryMovementRow key={movement.id} movement={movement} />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
@@ -307,44 +348,40 @@ function StoreWorkflowPanel({ steps }: { steps: StoreWorkflowStep[] }) {
   const nextStep = steps.find((step) => !step.done) ?? steps[steps.length - 1];
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-cyan-700 text-white">
-            <ClipboardList className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div>
-            <h2 className="text-base font-semibold text-slate-950">店铺运营流程</h2>
-            <p className="mt-1 text-sm text-slate-500">{nextStep.done ? "店铺基础流程已跑通。" : `下一步：${nextStep.title}`}</p>
-          </div>
+    <section className="sec">
+      <div className="sec-hd">
+        <div>
+          <span className="eyebrow">Store Workflow</span>
+          <h2>店铺运营流程</h2>
         </div>
-        <Link
-          href={nextStep.href}
-          className="inline-flex h-9 w-fit items-center gap-2 rounded-md bg-slate-950 px-3 text-sm font-medium text-white hover:bg-slate-800"
-        >
-          继续处理
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
+        <div className="sec-hd-end">
+          <span className="cap">{nextStep.done ? "店铺基础流程已跑通。" : `下一步：${nextStep.title}`}</span>
+          <Link
+            href={nextStep.href}
+            className="btn btn-primary"
+          >
+            继续处理
+            <svg className="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-r"></use></svg>
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-2 md:grid-cols-5">
+      <div className="steps steps-5">
         {steps.map((step) => (
           <Link
             key={step.key}
             href={step.href}
-            className={`rounded-md border px-3 py-3 transition ${
-              step.done ? "border-emerald-100 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"
-            }`}
+            className={`step ${step.done ? "is-done" : "is-open"}`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium text-slate-950">{step.title}</p>
+            <div className="step-hd">
+              <h4>{step.title}</h4>
               {step.done ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <svg className="ic ic-sm" aria-hidden="true" focusable="false" style={{ color: "var(--success)" }}><use href="#i-check"></use></svg>
               ) : (
-                <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+                <svg className="ic ic-sm" aria-hidden="true" focusable="false" style={{ color: "var(--warn)" }}><use href="#i-warn"></use></svg>
               )}
             </div>
-            <p className="mt-2 text-xs leading-5 text-slate-500">{step.hint}</p>
+            <p>{step.hint}</p>
           </Link>
         ))}
       </div>
@@ -439,39 +476,40 @@ function InventoryWorkflowPanel({
   ];
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <section className="sec">
+      <div className="sec-hd">
         <div>
-          <h2 className="text-lg font-semibold text-slate-950">库存处理流程</h2>
-          <p className="mt-1 text-sm text-slate-500">围绕低库存、销量数据、补货建议和人工确认推进</p>
+          <span className="eyebrow">Inventory Workflow</span>
+          <h2>库存处理流程</h2>
+          <p className="cap" style={{ marginTop: ".25rem" }}>围绕低库存、销量数据、补货建议和人工确认推进</p>
         </div>
-        <Link
-          href={hasLowStock ? `/stores/${storeId}?inventory=low` : "/imports"}
-          className="inline-flex h-9 w-fit items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          {hasLowStock ? "查看低库存" : "导入经营数据"}
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
+        <div className="sec-hd-end">
+          <Link
+            href={hasLowStock ? `/stores/${storeId}?inventory=low` : "/imports"}
+            className="btn"
+          >
+            {hasLowStock ? "查看低库存" : "导入经营数据"}
+            <svg className="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-r"></use></svg>
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-2 md:grid-cols-4">
+      <div className="steps steps-4">
         {steps.map((step) => (
           <Link
             key={step.title}
             href={step.href}
-            className={`rounded-md border px-3 py-3 transition ${
-              step.done ? "border-emerald-100 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"
-            }`}
+            className={`step ${step.done ? "is-done" : "is-open"}`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium text-slate-950">{step.title}</p>
+            <div className="step-hd">
+              <h4>{step.title}</h4>
               {step.done ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <svg className="ic ic-sm" aria-hidden="true" focusable="false" style={{ color: "var(--success)" }}><use href="#i-check"></use></svg>
               ) : (
-                <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+                <svg className="ic ic-sm" aria-hidden="true" focusable="false" style={{ color: "var(--warn)" }}><use href="#i-warn"></use></svg>
               )}
             </div>
-            <p className="mt-2 text-xs leading-5 text-slate-500">{step.hint}</p>
+            <p>{step.hint}</p>
           </Link>
         ))}
       </div>
@@ -482,67 +520,83 @@ function InventoryWorkflowPanel({
 /** 渲染 StoreProductRow 组件，集中展示店铺商品行所需的数据、状态和操作入口。 */
 function StoreProductRow({ product }: { product: Product }) {
   return (
-    <div className="grid gap-3 px-4 py-4 text-sm lg:min-h-16 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1fr_96px] lg:items-center lg:gap-0 lg:py-3">
-      <div>
-        <p className="font-medium text-slate-950">{product.name}</p>
-        <p className="mt-1 text-xs text-slate-500">{product.category ?? "未分类"}</p>
-      </div>
-      <span className="text-slate-600">{product.platform_status ?? "未同步"}</span>
-      <span className="font-medium text-slate-800">{product.price ? `¥${product.price}` : "-"}</span>
-      <div className="flex flex-wrap gap-1.5">
-        {product.selling_points.slice(0, 3).map((point) => (
-          <span key={point} className="rounded-md bg-emerald-50 px-2 py-1 text-xs text-emerald-700">
-            {point}
+    <tr>
+      <td>
+        <div className="cell-goods">
+          <span>
+            <b>{product.name}</b>
+            <span>{product.category ?? "未分类"}</span>
           </span>
-        ))}
-      </div>
-      <Link
-        href={`/products/${product.id}`}
-        className="inline-flex h-9 w-24 items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
-      >
-        进入
-        <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-      </Link>
-    </div>
+        </div>
+      </td>
+      <td>{product.platform_status ?? "未同步"}</td>
+      <td className="cell-price">{product.price ? `¥${product.price}` : "-"}</td>
+      <td>
+        <div className="tag-row">
+          {product.selling_points.slice(0, 3).map((point) => (
+            <span key={point} className="tag">{point}</span>
+          ))}
+        </div>
+      </td>
+      <td>
+        <div className="cell-actions">
+          <Link
+            href={`/products/${product.id}`}
+            className="btn btn-sm"
+          >
+            进入
+            <svg className="ic ic-sm" aria-hidden="true" focusable="false"><use href="#i-arrow-r"></use></svg>
+          </Link>
+        </div>
+      </td>
+    </tr>
   );
 }
 
 /** 渲染 InventoryRow 组件，集中展示库存行所需的数据、状态和操作入口。 */
 function InventoryRow({ row }: { row: StoreInventoryRow }) {
   return (
-    <div className="grid gap-3 px-4 py-4 text-sm lg:min-h-16 lg:grid-cols-[1.2fr_0.9fr_0.7fr_0.7fr_0.7fr_0.8fr] lg:items-center lg:gap-0 lg:py-3">
-      <div>
-        <p className="font-medium text-slate-950">{row.sku_name}</p>
-        <p className="mt-1 text-xs text-slate-500">{row.sku_code}</p>
-      </div>
-      <span className="text-slate-600">{row.product_name}</span>
-      <span className="font-medium text-slate-800">{row.quantity}</span>
-      <span className="text-slate-600">{row.locked_quantity}</span>
-      <span className="font-medium text-slate-800">{row.available_quantity}</span>
-      <span
-        className={`inline-flex h-7 w-fit items-center rounded-md px-2 text-xs font-medium ${
-          row.is_low_stock ? "bg-amber-100 text-amber-800" : "bg-emerald-50 text-emerald-700"
-        }`}
-      >
-        {row.is_low_stock ? `低库存 <= ${row.warning_threshold}` : "正常"}
-      </span>
-    </div>
+    <tr>
+      <td>
+        <div className="cell-goods">
+          <span>
+            <b>{row.sku_name}</b>
+            <span>{row.sku_code}</span>
+          </span>
+        </div>
+      </td>
+      <td>{row.product_name}</td>
+      <td className="cell-num">{row.quantity}</td>
+      <td className="cell-num">{row.locked_quantity}</td>
+      <td className="cell-num">{row.available_quantity}</td>
+      <td>
+        <span className={`badge ${row.is_low_stock ? "badge-warn" : "badge-online"}`}>
+          {row.is_low_stock ? `低库存 <= ${row.warning_threshold}` : "正常"}
+        </span>
+      </td>
+    </tr>
   );
 }
 
 /** 渲染 InventoryMovementRow 组件，集中展示库存流水行所需的数据、状态和操作入口。 */
 function InventoryMovementRow({ movement }: { movement: StoreInventoryMovementRow }) {
   return (
-    <div className="grid gap-3 px-4 py-3 text-sm lg:min-h-14 lg:grid-cols-[0.8fr_1fr_0.9fr_0.7fr_0.7fr_1fr] lg:items-center lg:gap-0">
-      <span className="font-medium text-slate-900">{movementTypeLabel(movement.movement_type)}</span>
-      <Link href={`/products/${movement.product_id}?tab=overview`} className="text-sky-700 hover:text-sky-900">
-        {movement.product_name}
-      </Link>
-      <span className="text-slate-600">{movement.sku_code}</span>
-      <span className="font-medium text-slate-800">{formatSigned(movement.quantity_delta)}</span>
-      <span className="text-slate-600">{formatSigned(movement.locked_delta)}</span>
-      <span className="truncate text-slate-600">{movement.reason ?? movement.created_at}</span>
-    </div>
+    <tr>
+      <td><span className="badge">{movementTypeLabel(movement.movement_type)}</span></td>
+      <td>
+        <Link href={`/products/${movement.product_id}?tab=overview`} className="cell-link">
+          {movement.product_name}
+        </Link>
+      </td>
+      <td className="mono-faint">{movement.sku_code}</td>
+      <td className={movement.quantity_delta > 0 ? "delta-pos" : movement.quantity_delta < 0 ? "delta-neg" : "delta-zero"}>
+        {formatSigned(movement.quantity_delta)}
+      </td>
+      <td className={movement.locked_delta > 0 ? "delta-pos" : movement.locked_delta < 0 ? "delta-neg" : "delta-zero"}>
+        {formatSigned(movement.locked_delta)}
+      </td>
+      <td style={{ minWidth: 0, overflowWrap: "anywhere" }}>{movement.reason ?? movement.created_at}</td>
+    </tr>
   );
 }
 

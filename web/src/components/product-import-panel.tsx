@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 
 type ImportRow = {
@@ -105,89 +104,98 @@ export function CsvImportPanel({
   }
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
-          <p className="mt-1 text-sm text-slate-500">{description}</p>
+    <section className="panel">
+      <div className="panel-head">
+        <h3>{title}</h3>
+        <span className="badge mono">PREVIEW → COMMIT</span>
+      </div>
+      <div className="panel-body stack-4">
+        <p className="t-meta">{description}</p>
+
+        <div className="field">
+          <label>{fileLabel}</label>
+          <input
+            type="file"
+            accept=".csv,text/csv"
+            onChange={handleFileChange}
+            className="input"
+          />
+          <span className="hint">
+            {selectedFile
+              ? `已选择文件：${selectedFile.name}。点击“预览”时才会读取并校验文件内容。`
+              : "选择 CSV 文件后，需要点击“预览”才会发送导入请求。"}
+          </span>
         </div>
-        <div className="flex flex-wrap gap-2">
+
+        {error ? (
+          <div className="alert is-error" role="alert">
+            <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+            <div><b>{error}</b></div>
+          </div>
+        ) : null}
+
+        {result ? (
+          <div className="stack-4">
+            <div className="form-grid-auto">
+              <ImportMetric label="总行数" value={result.total_rows} />
+              <ImportMetric label="有效行" value={result.valid_rows} tone="badge-online" />
+              <ImportMetric label="已创建" value={result.created_count} tone="badge-accent" />
+              <ImportMetric label="错误行" value={result.error_count} tone={result.error_count > 0 ? "badge-warn" : "badge"} />
+            </div>
+            <div className="tbl-wrap">
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th scope="col">行号</th>
+                    <th scope="col">状态</th>
+                    <th scope="col">{itemLabel}</th>
+                    <th scope="col">关联</th>
+                    <th scope="col">错误</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.rows.map((row) => (
+                    <tr key={row.row_number}>
+                      <td className="mono">{row.row_number}</td>
+                      <td>
+                        <span className={`badge ${row.status === "error" ? "" : row.status === "created" ? "badge-accent" : "badge-online"}`}>
+                          {statusLabel(row.status)}
+                        </span>
+                      </td>
+                      <td>{row.product_name ?? row.sku_name ?? "-"}</td>
+                      <td>{relatedText(row)}</td>
+                      <td>{row.errors.length > 0 ? row.errors.join("；") : "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="t-mini">
+              仅预览不写库；点击「确认导入」后，有效行才会写入，错误行会被后端拒绝。
+            </p>
+          </div>
+        ) : null}
+
+        <div className="form-actions" style={{ borderTop: "0", paddingTop: "0", marginTop: "0" }}>
           <button
             type="button"
             onClick={() => submitImport(false)}
             disabled={loading}
-            className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
+            className="btn"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {loading ? <span className="status-led is-busy" aria-hidden="true"></span> : null}
             预览
           </button>
           <button
             type="button"
             onClick={() => submitImport(true)}
             disabled={loading || !result || result.valid_rows === 0}
-            className="inline-flex h-9 items-center gap-2 rounded-md bg-slate-950 px-3 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="btn btn-primary"
           >
             确认导入
           </button>
         </div>
       </div>
-
-      <div className="mt-5 rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center">
-        <Upload className="mx-auto h-6 w-6 text-slate-400" aria-hidden="true" />
-        <span className="mt-2 block text-sm font-medium text-slate-700">{fileLabel}</span>
-        <input
-          type="file"
-          accept=".csv,text/csv"
-          onChange={handleFileChange}
-          className="mx-auto mt-3 block w-full max-w-md cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 file:mr-3 file:rounded file:border-0 file:bg-slate-950 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800"
-        />
-      </div>
-
-      {selectedFile ? (
-        <p className="mt-3 text-sm font-medium text-emerald-700">
-          已选择文件：{selectedFile.name}。点击“预览”时才会读取并校验文件内容。
-        </p>
-      ) : (
-        <p className="mt-3 text-sm text-slate-500">选择 CSV 文件后，需要点击“预览”才会发送导入请求。</p>
-      )}
-
-      {error ? <p className="mt-4 text-sm font-medium text-rose-700">{error}</p> : null}
-
-      {result ? (
-        <div className="mt-5">
-          <div className="grid gap-3 md:grid-cols-4">
-            <ImportMetric label="总行数" value={result.total_rows} />
-            <ImportMetric label="有效行" value={result.valid_rows} />
-            <ImportMetric label="已创建" value={result.created_count} />
-            <ImportMetric label="错误行" value={result.error_count} />
-          </div>
-          <div className="mt-4 overflow-hidden rounded-md border border-slate-200">
-            <div className="hidden grid-cols-[80px_90px_1fr_1fr_1.5fr] bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500 lg:grid">
-              <span>行号</span>
-              <span>状态</span>
-              <span>{itemLabel}</span>
-              <span>关联</span>
-              <span>错误</span>
-            </div>
-            <div className="divide-y divide-slate-200">
-              {result.rows.map((row) => (
-                <div
-                  key={row.row_number}
-                  className="grid gap-2 px-4 py-3 text-sm lg:grid-cols-[80px_90px_1fr_1fr_1.5fr] lg:items-center"
-                >
-                  <span className="text-slate-600">{row.row_number}</span>
-                  <span className={row.status === "error" ? "font-medium text-rose-700" : "font-medium text-emerald-700"}>
-                    {statusLabel(row.status)}
-                  </span>
-                  <span className="text-slate-900">{row.product_name ?? row.sku_name ?? "-"}</span>
-                  <span className="text-slate-600">{relatedText(row)}</span>
-                  <span className="text-slate-600">{row.errors.length > 0 ? row.errors.join("；") : "-"}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }
@@ -232,11 +240,12 @@ export function PerformanceImportCenterPanel() {
 }
 
 /** 渲染 ImportMetric 组件，集中展示导入指标所需的数据、状态和操作入口。 */
-function ImportMetric({ label, value }: { label: string; value: number }) {
+function ImportMetric({ label, value, tone }: { label: string; value: number; tone?: string }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-slate-950">{value}</p>
+    <div className="kpi">
+      <span className="kpi-lbl">{label}</span>
+      <span className="kpi-val mono">{value}</span>
+      {tone ? <span className={`badge ${tone}`}>{label}</span> : null}
     </div>
   );
 }

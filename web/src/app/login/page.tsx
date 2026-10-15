@@ -1,5 +1,7 @@
-import { LockKeyhole } from "lucide-react";
 import Link from "next/link";
+
+import { AppHeader, BrandMark } from "@/components/app-header";
+import { LoginForm } from "@/components/login-form";
 
 type LoginPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -9,59 +11,134 @@ type LoginPageProps = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = (await searchParams) ?? {};
   const error = Array.isArray(params.error) ? params.error[0] : params.error;
+  const expired = Array.isArray(params.expired) ? params.expired[0] : params.expired;
+  // /login/submit 把任何凭据失败都归为 ?error=1；页面不区分「邮箱不存在」与「密码错误」。
+  const failed = Boolean(error);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f7f8fb] px-5 py-10 text-slate-950">
-      <section className="w-full max-w-md rounded-md border border-slate-200 bg-white p-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-950 text-white">
-            <LockKeyhole className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-emerald-700">Ecommerce Operation Assistant</p>
-            <h1 className="text-xl font-semibold">登录工作台</h1>
+    <div className="app">
+      {/* 登录页是唯一未鉴权入口，因此不暴露产品导航 */}
+      <AppHeader current={null} sub="SIGN IN">
+        <span className="badge">公开入口 · 未鉴权</span>
+      </AppHeader>
+
+      <main className="app-body">
+        <div className="pane">
+          <div className="wrap">
+
+            <section className="sec" id="signin">
+              <div className="login-grid">
+
+                {/* 左：门面说明（登录页是唯一公开入口，必须自证可信） */}
+                <aside className="panel panel-inverted trust">
+                  <div className="panel-body">
+                    <span className="eyebrow">Operator Access</span>
+                    <div className="trust-brand">
+                      <span className="mark-slot" aria-hidden="true"><BrandMark /></span>
+                      <span>
+                        <b>运营智能体</b>
+                        <span className="mono">ECOMMERCE OPERATIONS AGENT</span>
+                      </span>
+                    </div>
+                    <p className="prose">
+                      统一运营工作台的唯一公开入口。登录后可进入多平台店铺运营工作台，
+                      商品、库存与运营任务都挂在账号有权限的店铺下。
+                    </p>
+
+                    <hr className="hair" />
+                    <span className="eyebrow">本页安全边界</span>
+                    <ul className="trust-list">
+                      <li>
+                        <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                        <span>页面不渲染任何账号、口令或口令片段；演示凭据一律向管理员线下获取。</span>
+                      </li>
+                      <li>
+                        <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                        <span>密码字段 type=password，不回显、不进入前端状态、不写入日志。</span>
+                      </li>
+                      <li>
+                        <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                        <span>失败提示不区分「邮箱不存在」与「密码错误」，避免账号枚举。</span>
+                      </li>
+                      <li>
+                        <svg className="ic" aria-hidden="true"><use href="#i-check"></use></svg>
+                        <span>令牌只落在 httpOnly + SameSite=Lax Cookie 上，前端脚本读不到。</span>
+                      </li>
+                    </ul>
+
+                    <hr className="hair" />
+                    <span className="eyebrow">认证链路</span>
+                    <ol className="trust-flow">
+                      <li><span className="mono">POST /login/submit</span><span className="desc">表单提交（Next.js route handler）</span></li>
+                      <li><span className="mono">POST /api/v1/auth/login</span><span className="desc">转发给 FastAPI，返回 access_token</span></li>
+                      <li><span className="mono">Set-Cookie · httpOnly</span><span className="desc">SameSite=Lax · Path=/ · 服务端统一附加 Authorization</span></li>
+                      <li><span className="mono">302 → /</span><span className="desc">进入业务工作台</span></li>
+                    </ol>
+                  </div>
+                </aside>
+
+                {/* 右：登录卡 */}
+                <div className="panel card-signin">
+                  <div className="panel-body">
+                    <div className="id-row">
+                      <span className="brand-badge mark-slot" aria-hidden="true"><BrandMark /></span>
+                      <div>
+                        <p className="who">电商运营助手 · 运营智能体</p>
+                        <h1>登录工作台</h1>
+                      </div>
+                    </div>
+
+                    <div className="cred-note">
+                      <svg className="ic" aria-hidden="true"><use href="#i-doc"></use></svg>
+                      <div>
+                        <b>演示凭据</b>
+                        <p>演示账号请向管理员获取。页面中不含任何账号、口令或可登录凭据。</p>
+                      </div>
+                    </div>
+
+                    {failed ? (
+                      <div className="alert is-error mt-3" role="alert">
+                        <svg className="ic" aria-hidden="true"><use href="#i-warn"></use></svg>
+                        <div>
+                          <b>邮箱与密码组合不正确，或账号已停用</b>
+                          <p>为避免账号枚举，这里不区分「邮箱不存在」与「密码错误」。按顺序自查：</p>
+                          <ul>
+                            <li>密码区分大小写：确认未开启大写锁定，输入法处于英文 / 半角状态。</li>
+                            <li>浏览器密码管理器可能回填了旧密码：清空后手动输入一次。</li>
+                            <li>仍失败请联系管理员核对账号状态（停用账号无法登录）。</li>
+                          </ul>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {expired ? (
+                      <div className="alert is-info mt-3" role="status">
+                        <svg className="ic" aria-hidden="true"><use href="#i-server"></use></svg>
+                        <div>
+                          <b>登录状态已过期，请重新登录</b>
+                          <p>原会话已被服务端判定失效，本次操作未提交，重新登录后可继续。</p>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <LoginForm failed={failed} />
+
+                    <Link href="/" className="back-link">
+                      <svg className="ic ic-sm" aria-hidden="true"><use href="#i-chev"></use></svg>返回业务工作台
+                    </Link>
+
+                    <p className="login-foot">
+                      失败时不区分具体字段 · 成功后 302 到 / · 会话写入 httpOnly Cookie
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
           </div>
         </div>
-
-        {error ? (
-          <div className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-            邮箱或密码不正确，或者账号已停用。
-          </div>
-        ) : null}
-
-        <form action="/login/submit" method="post" className="mt-6 space-y-4">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">邮箱</span>
-            <input
-              name="email"
-              type="email"
-              required
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 px-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-              placeholder="owner@example.com"
-            />
-          </label>
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">密码</span>
-            <input
-              name="password"
-              type="password"
-              required
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 px-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-              placeholder="输入密码"
-            />
-          </label>
-          <button
-            type="submit"
-            className="inline-flex h-11 w-full items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800"
-          >
-            登录
-          </button>
-        </form>
-
-        <Link href="/" className="mt-4 inline-flex text-sm text-slate-500 hover:text-slate-900">
-          返回首页
-        </Link>
-      </section>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -11,7 +11,7 @@ type CreativePlanStatusActionsProps = {
 export function CreativePlanStatusActions({ canEdit = true, plan, productId, tab }: CreativePlanStatusActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className={`rounded-md px-2 py-1 text-xs ${statusClassName(plan.status)}`}>
+      <span className={`rounded-full px-2 py-1 text-xs ${statusClassName(plan.status)}`}>
         {statusLabel(plan.status)}
       </span>
       {!canEdit ? null : (
@@ -27,7 +27,7 @@ export function CreativePlanStatusActions({ canEdit = true, plan, productId, tab
             type="submit"
             name="status"
             value="selected"
-            className="h-7 rounded-md bg-emerald-600 px-2.5 text-xs font-medium text-white transition hover:bg-emerald-700"
+            className="h-7 rounded-md bg-emerald-600 px-2 text-xs font-medium text-white transition hover:bg-emerald-700"
           >
             选中
           </button>
@@ -37,7 +37,7 @@ export function CreativePlanStatusActions({ canEdit = true, plan, productId, tab
             type="submit"
             name="status"
             value="archived"
-            className="h-7 rounded-md bg-slate-200 px-2.5 text-xs font-medium text-slate-700 transition hover:bg-slate-300"
+            className="h-7 rounded-md bg-slate-200 px-2 text-xs font-medium text-slate-700 transition hover:bg-slate-300"
           >
             归档
           </button>
@@ -47,7 +47,7 @@ export function CreativePlanStatusActions({ canEdit = true, plan, productId, tab
             type="submit"
             name="status"
             value="draft"
-            className="h-7 rounded-md border border-slate-200 px-2.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:bg-white"
+            className="h-7 rounded-md border border-slate-200 px-2 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:bg-white"
           >
             草稿
           </button>

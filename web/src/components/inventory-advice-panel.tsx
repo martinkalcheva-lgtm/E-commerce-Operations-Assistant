@@ -32,7 +32,7 @@ export function InventoryAdvicePanel({ storeId, canEdit = true }: { storeId: num
   }
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-5">
+    <section className="ios-card p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-950">库存异常 AI 建议</h2>
@@ -43,13 +43,13 @@ export function InventoryAdvicePanel({ storeId, canEdit = true }: { storeId: num
             type="button"
             onClick={generateAdvice}
             disabled={loading}
-            className="inline-flex h-9 w-fit items-center gap-2 rounded-md bg-slate-950 px-3 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="inline-flex h-9 w-fit items-center gap-2 rounded-md bg-slate-950 px-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Brain className="h-4 w-4" aria-hidden="true" />}
             生成建议
           </button>
         ) : (
-          <span className="inline-flex h-9 w-fit items-center rounded-md border border-amber-200 bg-amber-50 px-3 text-sm font-medium text-amber-800">
+          <span className="inline-flex h-9 w-fit items-center rounded-md border border-amber-200 bg-amber-50 px-2 text-sm font-medium text-amber-800">
             只读模式
           </span>
         )}
@@ -58,7 +58,7 @@ export function InventoryAdvicePanel({ storeId, canEdit = true }: { storeId: num
       {error ? <p className="mt-4 text-sm font-medium text-rose-700">{error}</p> : null}
 
       {advice ? (
-        <div className="mt-5 grid gap-4">
+        <div className="mt-6 grid gap-4">
           <div className="rounded-md border border-cyan-100 bg-cyan-50 p-4">
             <p className="text-xs font-medium text-cyan-800">{advice.source === "llm" ? "AI 生成" : "规则建议"}</p>
             <p className="mt-2 text-sm leading-6 text-slate-800">{advice.summary}</p>
@@ -76,9 +76,9 @@ export function InventoryAdvicePanel({ storeId, canEdit = true }: { storeId: num
 /** 渲染 AdviceList 组件，集中展示建议列表所需的数据、状态和操作入口。 */
 function AdviceList({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+    <div className="ios-card p-4">
       <h3 className="text-sm font-semibold text-slate-950">{title}</h3>
-      <ul className="mt-3 grid gap-2">
+      <ul className="mt-2 grid gap-2">
         {items.map((item) => (
           <li key={item} className="text-sm leading-6 text-slate-700">
             {item}

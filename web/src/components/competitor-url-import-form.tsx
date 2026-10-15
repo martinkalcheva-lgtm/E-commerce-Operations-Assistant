@@ -22,7 +22,7 @@ export function CompetitorUrlImportForm({ canEdit = true, productId }: Competito
     return (
       <div>
         <h2 className="text-base font-semibold text-slate-950">鍒涘缓绔炲搧瑙ｆ瀽浠诲姟</h2>
-        <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-2 text-sm text-amber-800">
           当前账号为只读权限，不能创建解析任务。
         </p>
       </div>
@@ -31,7 +31,7 @@ export function CompetitorUrlImportForm({ canEdit = true, productId }: Competito
 
   return (
     <form action={`/products/${productId}/competitors/import-url`} method="post" className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white">
           <ScanSearch className="h-4 w-4" aria-hidden="true" />
         </div>
@@ -47,7 +47,7 @@ export function CompetitorUrlImportForm({ canEdit = true, productId }: Competito
           name="url"
           required
           type="url"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           placeholder="https://..."
         />
       </label>
@@ -57,7 +57,7 @@ export function CompetitorUrlImportForm({ canEdit = true, productId }: Competito
         <select
           name="platform"
           defaultValue="douyin"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         >
           {platforms.map((platform) => (
             <option key={platform.value} value={platform.value}>

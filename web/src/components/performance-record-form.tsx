@@ -24,7 +24,7 @@ export function PerformanceRecordForm({
     return (
       <div>
         <h2 className="text-base font-semibold text-slate-950">褰曞叆缁忚惀鏁版嵁</h2>
-        <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-2 text-sm text-amber-800">
           当前账号为只读权限，不能录入经营数据。
         </p>
       </div>
@@ -38,7 +38,7 @@ export function PerformanceRecordForm({
 
   return (
     <form action={`/products/${productId}/performance-records/create`} method="post" className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-600 text-white">
           <BarChart3 className="h-4 w-4" aria-hidden="true" />
         </div>
@@ -55,7 +55,7 @@ export function PerformanceRecordForm({
             name="period_start"
             required
             type="date"
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
           />
         </label>
 
@@ -65,7 +65,7 @@ export function PerformanceRecordForm({
             name="period_end"
             required
             type="date"
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
           />
         </label>
       </div>
@@ -74,7 +74,7 @@ export function PerformanceRecordForm({
         <span className="text-sm font-medium text-slate-700">关联素材</span>
         <select
           name="creative_plan_id"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
         >
           <option value="">不关联素材</option>
           {sortedCreativePlans.map((plan) => (
@@ -90,7 +90,7 @@ export function PerformanceRecordForm({
         <span className="text-sm font-medium text-slate-700">关联投放实验</span>
         <select
           name="ad_experiment_id"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
         >
           <option value="">不关联实验</option>
           {adExperiments.map((experiment) => (
@@ -106,7 +106,7 @@ export function PerformanceRecordForm({
         <span className="text-sm font-medium text-slate-700">关联链接</span>
         <select
           name="promotion_link_id"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
         >
           <option value="">不关联链接</option>
           {promotionLinks.map((link) => (
@@ -121,7 +121,7 @@ export function PerformanceRecordForm({
         <span className="text-sm font-medium text-slate-700">关联生成素材</span>
         <select
           name="generated_asset_id"
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
         >
           <option value="">不关联生成素材</option>
           {generatedAssets.map((asset) => (
@@ -147,7 +147,7 @@ export function PerformanceRecordForm({
         <span className="text-sm font-medium text-slate-700">备注</span>
         <textarea
           name="notes"
-          className="mt-2 min-h-20 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+          className="mt-2 min-h-20 w-full resize-y rounded-md border border-slate-200 bg-white px-2 py-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
           placeholder="可记录素材版本、投放人群、活动价等上下文"
         />
       </label>
@@ -181,7 +181,7 @@ function NumberInput({
       <input
         name={name}
         inputMode={decimal ? "decimal" : "numeric"}
-        className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+        className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
         placeholder={placeholder}
       />
     </label>

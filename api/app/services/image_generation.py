@@ -53,8 +53,10 @@ def generate_main_image_asset(
 
     # 生成前清洗 prompt，减少不可见字符和特殊货币符号导致供应商接口解析失败的概率。
     prompt = _sanitize_image_prompt(_main_image_prompt(creative_plan))
-    if settings.image_model != "jimeng_t2i_v30":
-        raise ImageGenerationNotConfiguredError("本章图片模型必须为 jimeng_t2i_v30。")
+    if settings.image_model not in {"jimeng_t2i_v30", "jimeng_t2i_v40"}:
+        raise ImageGenerationNotConfiguredError(
+            "本章图片模型必须为 jimeng_t2i_v30 或 jimeng_t2i_v40。"
+        )
     task_id = _create_jimeng_image_task(prompt, settings)
     result = _poll_jimeng_image_task(task_id, settings)
     image_url = _extract_jimeng_image_url(result)

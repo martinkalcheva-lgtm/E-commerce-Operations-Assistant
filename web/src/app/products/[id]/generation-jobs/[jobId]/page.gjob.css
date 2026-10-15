@@ -1,0 +1,146 @@
+/* ==========================================================================
+   /products/[id]/generation-jobs/[jobId] 页面级样式
+   （对照 _design/zhao/designs/generation-job.html 的 <style> 块）
+   --------------------------------------------------------------------------
+   · 全部选择器作用域限定在 .pg-gjob 根节点下，避免跨页类名冲突
+   · 只消费 design-system.css / page-chrome.css 的 token 与组件类，
+     不新增颜色/圆角/阴影/字体（视觉值一律 var(--)）
+   · 设计稿声明带 .ribbon、「状态语义图例」示意卡与 .src-map 属设计稿
+     自述脚手架，不落地；媒体产物用真实 <img>/<video> 呈现
+   ========================================================================== */
+
+.pg-gjob .mono-note { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); }
+.pg-gjob .mono-faint { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-gjob .cap { font-size: var(--fs-body); color: var(--muted); line-height: 1.75; }
+.pg-gjob .cap-2 { font-size: var(--fs-body); color: var(--fg-secondary); line-height: 1.75; }
+
+.pg-gjob .back {
+  display: inline-flex; align-items: center; gap: .5rem; min-height: 44px;
+  font-size: var(--fs-body); color: var(--muted);
+  transition: color var(--t-2) var(--ease-state);
+}
+.pg-gjob .back:hover { color: var(--fg); }
+.pg-gjob .back .ic { transform: rotate(90deg); }
+
+.pg-gjob .sec-hd .right { display: flex; flex-direction: column; align-items: flex-end; gap: .375rem; }
+.pg-gjob .sec-hd .right .cap { max-width: 44em; text-align: right; }
+
+/* ---- 页头 ---- */
+.pg-gjob .job-hd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4) var(--sp-5); align-items: start; }
+.pg-gjob .job-title { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.pg-gjob .job-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+
+/* ---- 状态徽标（五态一一对应源码 tone 映射） ---- */
+.pg-gjob .st {
+  display: inline-flex; align-items: center; gap: .45em;
+  min-height: 32px; padding: .2em .625em;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700;
+  letter-spacing: .04em; white-space: nowrap;
+}
+.pg-gjob .st i, .pg-gjob .st .dot { flex: none; }
+.pg-gjob .st-pending   { color: var(--muted);          background: var(--surface-subtle); border-color: var(--border); }
+.pg-gjob .st-running   { color: var(--warn);           background: var(--warn-tint);      border-color: var(--border-warn); }
+.pg-gjob .st-succeeded { color: var(--success);        background: var(--success-tint);   border-color: var(--border-success); }
+.pg-gjob .st-failed    { color: var(--accent);         background: var(--accent-tint);    border-color: var(--border-accent); }
+.pg-gjob .st-cancelled { color: var(--faint);          background: var(--surface-sunken); border-color: var(--border); border-style: dashed; }
+.pg-gjob .st .sq { width: 8px; height: 8px; background: currentColor; flex: none; }
+.pg-gjob .st .sq-hollow { width: 8px; height: 8px; border: 1px solid currentColor; flex: none; }
+
+/* ---- 任务摘要 ---- */
+.pg-gjob .m-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
+.pg-gjob .m-card {
+  min-width: 0; padding: var(--sp-4); border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface);
+  display: flex; flex-direction: column; gap: .375rem;
+}
+.pg-gjob .m-card.is-lead { border-top-width: 2px; border-top-color: var(--accent); }
+.pg-gjob .m-card.is-idle { background: var(--surface-sunken); }
+.pg-gjob .m-lbl {
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
+}
+.pg-gjob .m-val { font-size: var(--fs-h3); font-weight: 700; color: var(--fg); overflow-wrap: anywhere; }
+.pg-gjob .m-val.mono { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; }
+.pg-gjob .m-val.is-idle { color: var(--muted); }
+.pg-gjob .m-sub { font-size: var(--fs-mini); color: var(--muted); font-family: var(--font-mono); }
+
+/* ---- 进度：轨道（离散态，不画假百分比） ---- */
+.pg-gjob .track { position: relative; height: 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-sunken); }
+.pg-gjob .track-fill { height: 100%; background: var(--warn); }
+.pg-gjob .track.is-done .track-fill { background: var(--success); }
+.pg-gjob .track.is-failed .track-fill { background: var(--accent); }
+.pg-gjob .track.is-cancelled { border-style: dashed; }
+.pg-gjob .track.is-cancelled .track-fill { background: var(--faint); }
+.pg-gjob .track.is-queued { border-style: dashed; }
+.pg-gjob .track.is-queued .track-fill { display: none; }
+.pg-gjob .track-scale {
+  display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap;
+  margin-top: .375rem; font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint);
+}
+.pg-gjob .track-wrap { min-width: 0; }
+
+/* ---- 面板状态：3px 左侧色条是唯一的强优先级表达 ---- */
+.pg-gjob .panel.is-running { border-left: 3px solid var(--warn); }
+.pg-gjob .panel.is-failed { border-left: 3px solid var(--accent); }
+.pg-gjob .panel.is-succeeded { border-left: 3px solid var(--success); }
+.pg-gjob .panel.is-cancelled { border-left: 3px dashed var(--border-strong); }
+.pg-gjob .panel.is-pending { border-left: 3px solid var(--muted); }
+
+/* ---- 事实表 ---- */
+.pg-gjob .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: var(--sp-3) var(--sp-4); }
+.pg-gjob .fact { min-width: 0; border-left: 1px solid var(--border); padding-left: var(--sp-3); }
+.pg-gjob .fact dt {
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--faint);
+}
+.pg-gjob .fact dd { font-size: var(--fs-body); color: var(--fg-secondary); line-height: 1.7; margin-top: .125rem; overflow-wrap: anywhere; }
+.pg-gjob .fact dd.mono { font-family: var(--font-mono); }
+
+/* ---- 失败 / 取消 原因块 ---- */
+.pg-gjob .reason { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-sunken); padding: var(--sp-4); }
+.pg-gjob .reason.is-failed { border-left: 3px solid var(--accent); background: var(--accent-tint); }
+.pg-gjob .reason.is-cancelled { border-left: 3px dashed var(--border-strong); }
+.pg-gjob .reason h4 { font-size: var(--fs-h3); }
+.pg-gjob .reason p { font-size: var(--fs-body); line-height: 1.8; color: var(--fg-secondary); }
+.pg-gjob .reason .raw {
+  margin-top: var(--sp-3); padding: var(--sp-3);
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+  font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--fg-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* ---- 代码块 ---- */
+.pg-gjob .code {
+  margin: 0; padding: var(--sp-3);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-sunken); color: var(--fg-secondary);
+  font-family: var(--font-mono); font-size: var(--fs-mini); line-height: 1.75;
+  max-height: 420px; overflow: auto; white-space: pre; tab-size: 2;
+}
+
+/* ---- 空态 ---- */
+.pg-gjob .empty { text-align: left; }
+.pg-gjob .empty h4, .pg-gjob .empty h3 { margin-top: var(--sp-3); }
+.pg-gjob .empty h3 { font-size: var(--fs-h3); margin-bottom: .375rem; }
+.pg-gjob .empty p { margin: 0; max-width: none; font-size: var(--fs-body); }
+.pg-gjob .empty-actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-4); }
+.pg-gjob .empty-next {
+  margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted);
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 1023px) {
+  .pg-gjob .m-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pg-gjob .job-hd { grid-template-columns: minmax(0, 1fr); }
+  .pg-gjob .sec-hd .right { align-items: flex-start; }
+  .pg-gjob .sec-hd .right .cap { text-align: left; }
+}
+@media (max-width: 767px) {
+  .pg-gjob .m-grid { grid-template-columns: minmax(0, 1fr); }
+  /* 窄屏：头部一行放不下时允许换行，徽标不再 nowrap，避免被 overflow-x 裁掉 */
+  .pg-gjob .panel-head, .pg-gjob .trace-hd, .pg-gjob .row-between { flex-wrap: wrap; }
+  .pg-gjob .panel-head .badge, .pg-gjob .sec-hd .badge, .pg-gjob .job-hd .st { white-space: normal; }
+}

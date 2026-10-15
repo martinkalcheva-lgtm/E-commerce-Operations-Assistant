@@ -33,17 +33,17 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
           name="name"
           required
           defaultValue={product.name}
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </label>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         <label className="block">
           <span className="text-sm font-medium text-slate-700">平台</span>
           <select
             name="platform"
             defaultValue={product.platform}
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           >
             {platforms.map((platform) => (
               <option key={platform.value} value={platform.value}>
@@ -58,19 +58,19 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
           <input
             name="category"
             defaultValue={product.category ?? ""}
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </label>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         <label className="block">
           <span className="text-sm font-medium text-slate-700">售价</span>
           <input
             name="price"
             inputMode="decimal"
             defaultValue={product.price ?? ""}
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </label>
 
@@ -80,7 +80,7 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
             name="cost"
             inputMode="decimal"
             defaultValue={product.cost ?? ""}
-            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </label>
       </div>
@@ -90,7 +90,7 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
         <input
           name="target_audience"
           defaultValue={product.target_audience ?? ""}
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </label>
 
@@ -100,7 +100,7 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
           name="selling_points"
           defaultValue={product.selling_points.join("\n")}
           rows={4}
-          className="mt-2 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 w-full resize-y rounded-md border border-slate-200 bg-white px-2 py-2 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </label>
 
@@ -109,7 +109,7 @@ export function ProductEditForm({ canEdit = true, product }: ProductEditFormProp
         <input
           name="product_url"
           defaultValue={product.product_url ?? ""}
-          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="mt-2 h-10 w-full rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </label>
 

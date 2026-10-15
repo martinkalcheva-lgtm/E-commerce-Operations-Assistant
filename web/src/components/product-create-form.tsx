@@ -1,4 +1,4 @@
-import { Plus, Sparkles } from "lucide-react";
+import { BrandMark } from "@/components/app-header";
 import type { Store } from "@/types";
 
 const platforms = [
@@ -19,34 +19,30 @@ type ProductCreateFormProps = {
 /** 渲染 ProductCreateForm 组件，集中展示商品创建表单所需的数据、状态和操作入口。 */
 export function ProductCreateForm({ stores = [] }: ProductCreateFormProps) {
   return (
-    <form action="/products/create" method="post" className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-emerald-600 text-white">
-          <Sparkles className="h-5 w-5" aria-hidden="true" />
-        </div>
+    <form action="/products/create" method="post" className="stack-4">
+      <div className="row">
+        <span className="brand-badge mark-slot" aria-hidden="true"><BrandMark /></span>
         <div>
-          <h2 className="text-lg font-semibold text-slate-950">新建单品</h2>
-          <p className="text-sm text-slate-500">先把一个商品跑完整运营链路</p>
+          <h3 className="t-h3">新建单品</h3>
+          <p className="t-mini">先把一个商品跑完整运营链路</p>
         </div>
       </div>
 
-      <label className="block">
-        <span className="text-sm font-medium text-slate-700">商品名称</span>
+      <div className="field">
+        <label htmlFor="product-name">商品名称</label>
         <input
+          id="product-name"
           name="name"
           required
-          className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="input"
           placeholder="例如：低糖燕麦饼干"
         />
-      </label>
+      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">所属店铺</span>
-          <select
-            name="store_id"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-          >
+      <div className="grid-2">
+        <div className="field">
+          <label htmlFor="product-store">所属店铺</label>
+          <select id="product-store" name="store_id" className="input">
             <option value="">暂不绑定</option>
             {stores.map((store) => (
               <option key={store.id} value={store.id}>
@@ -54,68 +50,65 @@ export function ProductCreateForm({ stores = [] }: ProductCreateFormProps) {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">平台</span>
-          <select
-            name="platform"
-            defaultValue="douyin"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-          >
+        <div className="field">
+          <label htmlFor="product-platform">平台</label>
+          <select id="product-platform" name="platform" defaultValue="douyin" className="input">
             {platforms.map((platform) => (
               <option key={platform.value} value={platform.value}>
                 {platform.label}
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">类目</span>
+        <div className="field">
+          <label htmlFor="product-category">类目</label>
           <input
+            id="product-category"
             name="category"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="input"
             placeholder="食品 / 家居 / 美妆"
           />
-        </label>
-      </div>
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">售价</span>
+        <div className="field">
+          <label htmlFor="product-price">售价</label>
           <input
+            id="product-price"
             name="price"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="input"
             placeholder="29.90"
             inputMode="decimal"
           />
-        </label>
+        </div>
 
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">目标人群</span>
+        <div className="field">
+          <label htmlFor="product-audience">目标人群</label>
           <input
+            id="product-audience"
             name="target_audience"
-            className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            className="input"
             placeholder="年轻上班族"
           />
-        </label>
+        </div>
       </div>
 
-      <label className="block">
-        <span className="text-sm font-medium text-slate-700">核心卖点</span>
+      <div className="field">
+        <label htmlFor="product-points">核心卖点</label>
         <textarea
+          id="product-points"
           name="selling_points"
-          className="mt-2 min-h-24 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          className="input"
           placeholder="用逗号或换行分隔，例如：低糖、饱腹、独立包装"
         />
-      </label>
+      </div>
 
       <button
         type="submit"
-        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+        className="btn btn-primary"
       >
-        <Plus className="h-4 w-4" aria-hidden="true" />
         创建商品
       </button>
     </form>

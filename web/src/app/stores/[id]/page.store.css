@@ -1,0 +1,156 @@
+/* ==========================================================================
+   /stores/[id] 页面级样式（对照 _design/zhao/designs/store-detail.html 的 <style> 块）
+   --------------------------------------------------------------------------
+   · 全部选择器作用域限定在 .pg-store 根节点下，避免跨页类名冲突
+   · 只消费 design-system.css / page-chrome.css 的 token 与组件类，
+     不新增颜色/圆角/阴影/字体（视觉值一律 var(--)）
+   · 设计稿声明带 .ribbon 与 .src-map 属设计稿自述脚手架，不落地
+   ========================================================================== */
+
+.pg-store .mono-note { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); }
+.pg-store .mono-faint { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-store .cap { font-size: var(--fs-body); color: var(--muted); line-height: 1.75; }
+.pg-store .cap-2 { font-size: var(--fs-body); color: var(--fg-secondary); line-height: 1.75; }
+
+.pg-store .back {
+  display: inline-flex; align-items: center; gap: .5rem; min-height: 44px;
+  font-size: var(--fs-body); color: var(--muted);
+  transition: color var(--t-2) var(--ease-state);
+}
+.pg-store .back:hover { color: var(--fg); }
+.pg-store .back .ic { transform: rotate(90deg); }
+
+/* ---- 页头：店铺身份 ---- */
+.pg-store .store-hd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4) var(--sp-5); align-items: start; }
+.pg-store .store-id { display: flex; gap: var(--sp-4); min-width: 0; }
+.pg-store .store-mark {
+  width: 52px; height: 52px; flex: none; border-radius: var(--radius);
+  display: grid; place-items: center; font-size: 1.25rem;
+  background: var(--fg); color: var(--bg);
+}
+.pg-store .store-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.pg-store .id-line { display: flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: center; }
+
+/* ---- KPI（4 列版；基类复用 page-chrome 的 .kpi） ---- */
+.pg-store .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+.pg-store .kpi-grid.second { margin-top: var(--sp-4); }
+.pg-store .kpi.is-idle { border-top-color: var(--muted); }
+.pg-store .kpi-val .unit { font-family: var(--font-mono); font-size: var(--fs-h3); font-weight: 600; color: var(--muted); }
+.pg-store .kpi-desc b { color: var(--fg-secondary); font-weight: 600; }
+
+/* ---- 流程步骤 ---- */
+.pg-store .steps { display: grid; gap: var(--sp-2); }
+.pg-store .steps-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.pg-store .steps-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pg-store .step {
+  min-width: 0; padding: var(--sp-3) var(--sp-3) var(--sp-3) calc(var(--sp-3) - 2px);
+  border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--radius);
+  background: var(--surface);
+  display: flex; flex-direction: column; gap: .5rem;
+  min-height: 44px;
+  transition: background-color var(--t-2) var(--ease-state);
+}
+.pg-store .step:hover { background: var(--surface-subtle); }
+.pg-store .step.is-done { border-left-color: var(--success); }
+.pg-store .step.is-open { border-left-color: var(--warn); }
+.pg-store .step.is-idle { border-left-color: var(--border); }
+.pg-store .step-hd { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.pg-store .step-hd h4, .pg-store .step-hd h3 { font-size: var(--fs-body); }
+.pg-store .step p { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; }
+
+/* ---- 告警面板 ---- */
+.pg-store .alert {
+  border: 1px solid var(--border); border-left: 3px solid var(--warn);
+  border-radius: var(--radius); background: var(--warn-tint);
+  padding: var(--sp-4);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-3) var(--sp-4);
+  align-items: start;
+}
+.pg-store .alert-hd { display: flex; gap: var(--sp-3); min-width: 0; }
+.pg-store .alert-ic { font-size: 1.25rem; color: var(--warn); flex: none; line-height: 1.2; }
+.pg-store .alert h3 { font-size: var(--fs-h3); }
+.pg-store .alert p { font-size: var(--fs-body); color: var(--fg-secondary); line-height: 1.75; margin-top: .25rem; }
+.pg-store .sku-chips { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.pg-store .sku-chip {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  min-height: 44px; padding: .5rem .75rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); font-size: var(--fs-body);
+  transition: background-color var(--t-2) var(--ease-state);
+}
+.pg-store .sku-chip:hover { background: var(--surface-subtle); }
+.pg-store .sku-chip .nm { font-weight: 600; }
+.pg-store .sku-chip .qty { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--accent); }
+
+/* ---- 业务事实表（口径） ---- */
+.pg-store .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: var(--sp-3) var(--sp-4); }
+.pg-store .fact { min-width: 0; border-left: 1px solid var(--border); padding-left: var(--sp-3); }
+.pg-store .fact dt {
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--faint);
+}
+.pg-store .fact dd { font-size: var(--fs-body); color: var(--fg-secondary); line-height: 1.7; margin-top: .125rem; overflow-wrap: anywhere; }
+.pg-store .fact dd.mono { font-family: var(--font-mono); }
+
+/* ---- 表格 ---- */
+.pg-store .tbl { font-size: var(--fs-body); }
+.pg-store .tbl td { vertical-align: middle; }
+.pg-store .cell-goods { min-width: 0; }
+.pg-store .cell-goods > span > b {
+  display: block; min-width: 0;
+  font-family: var(--font-body); font-size: var(--fs-body);
+  font-weight: 600; color: var(--fg); line-height: 1.45;
+}
+.pg-store .cell-goods > span > span,
+.pg-store .cell-goods > span > .cg-sub {
+  display: block; min-width: 0;
+  font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint);
+  overflow-wrap: anywhere;
+}
+.pg-store .cell-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--fg-secondary); }
+.pg-store .cell-link:hover { color: var(--accent); }
+.pg-store .delta-pos { font-family: var(--font-mono); font-weight: 700; color: var(--success); }
+.pg-store .delta-neg { font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+.pg-store .delta-zero { font-family: var(--font-mono); font-weight: 700; color: var(--muted); }
+.pg-store .tbl-scroll { min-width: 780px; }
+.pg-store .tbl-scroll-sm { min-width: 640px; }
+
+/* ---- 空态（引导性） ---- */
+.pg-store .empty { text-align: left; }
+.pg-store .empty h4 { margin-top: var(--sp-3); }
+.pg-store .empty p { margin: 0; max-width: none; font-size: var(--fs-body); }
+.pg-store .empty-actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-4); }
+.pg-store .empty-next {
+  margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted);
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 1199px) {
+  .pg-store .steps-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1023px) {
+  .pg-store .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pg-store .store-hd { grid-template-columns: minmax(0, 1fr); }
+  .pg-store .store-actions { justify-content: flex-start; }
+  .pg-store .steps-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pg-store .sec-hd .right { align-items: flex-start; }
+}
+@media (max-width: 767px) {
+  .pg-store .kpi-grid { grid-template-columns: minmax(0, 1fr); }
+  .pg-store .steps-5, .pg-store .steps-4 { grid-template-columns: minmax(0, 1fr); }
+  .pg-store .sku-chips { grid-template-columns: minmax(0, 1fr); }
+  .pg-store .alert { grid-template-columns: minmax(0, 1fr); }
+  .pg-store .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .pg-store .tabs::-webkit-scrollbar { display: none; }
+  .pg-store .tab { flex: 0 0 auto; }
+  .pg-store .store-id { flex-direction: column; }
+  .pg-store .cell-actions .btn { width: 100%; }
+  /* 窄屏：头部一行放不下时允许换行，徽标不再 nowrap，避免被 overflow-x 裁掉 */
+  .pg-store .panel-head, .pg-store .row-between, .pg-store .confirm-bar { flex-wrap: wrap; }
+  .pg-store .panel-head .badge, .pg-store .sec-hd .badge, .pg-store .kpi-foot .badge { white-space: normal; }
+}
+
+/* ---- sec-hd 右侧操作组 ---- */
+.pg-store .sec-hd-end { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }

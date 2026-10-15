@@ -11,7 +11,7 @@ export function DiagnosisEditForm({ diagnosis, productId }: DiagnosisEditFormPro
     <form
       action={`/products/${productId}/diagnoses/${diagnosis.id}/update`}
       method="post"
-      className="mt-4 grid gap-3 border-t border-slate-200 pt-4"
+      className="mt-4 grid gap-2 border-t border-slate-200 pt-4"
     >
       {/* 诊断结论来自 AI 或规则初稿，但最终运营判断需要可编辑，避免把模型输出当作不可更改的事实。 */}
       <label className="grid gap-1.5">
@@ -20,7 +20,7 @@ export function DiagnosisEditForm({ diagnosis, productId }: DiagnosisEditFormPro
           name="positioning"
           defaultValue={diagnosis.positioning}
           rows={3}
-          className="resize-y rounded-md border border-slate-200 px-3 py-2 text-sm leading-6 outline-none focus:border-slate-400"
+          className="resize-y rounded-md border border-slate-200 px-2 py-2 text-sm leading-6 outline-none focus:border-slate-400"
         />
       </label>
 
@@ -30,11 +30,11 @@ export function DiagnosisEditForm({ diagnosis, productId }: DiagnosisEditFormPro
           name="price_band"
           defaultValue={diagnosis.price_band}
           rows={2}
-          className="resize-y rounded-md border border-slate-200 px-3 py-2 text-sm leading-6 outline-none focus:border-slate-400"
+          className="resize-y rounded-md border border-slate-200 px-2 py-2 text-sm leading-6 outline-none focus:border-slate-400"
         />
       </label>
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-2 md:grid-cols-2">
         <ListField label="人群洞察" name="audience_insights" items={diagnosis.audience_insights} />
         <ListField label="用户痛点" name="pain_points" items={diagnosis.pain_points} />
         <ListField label="卖点判断" name="selling_point_analysis" items={diagnosis.selling_point_analysis} />
@@ -70,7 +70,7 @@ function ListField({
         name={name}
         defaultValue={items.join("\n")}
         rows={4}
-        className="resize-y rounded-md border border-slate-200 px-3 py-2 text-sm leading-6 outline-none focus:border-slate-400"
+        className="resize-y rounded-md border border-slate-200 px-2 py-2 text-sm leading-6 outline-none focus:border-slate-400"
       />
     </label>
   );

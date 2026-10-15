@@ -1,0 +1,156 @@
+/* ==========================================================================
+   /products/[id] 页面级样式（对照 _design/zhao/designs/product-detail.html 的 <style> 块）
+   --------------------------------------------------------------------------
+   · 全部选择器作用域限定在 .pg-product 根节点下，避免跨页类名冲突
+   · 只消费 design-system.css / page-chrome.css 的 token 与组件类，
+     不新增颜色/圆角/阴影/字体（视觉值一律 var(--)）
+   · 设计稿声明带 .ribbon 与「修复对照」表属设计稿自述脚手架，不落地；
+     反白 lead 面板以「流程轨 + 任务摘要」组合承担首屏层级（偏差见完工汇报）
+   ========================================================================== */
+
+.pg-product .back {
+  display: inline-flex; align-items: center; gap: .5rem; min-height: 44px;
+  font-size: var(--fs-meta); color: var(--muted);
+  transition: color var(--t-2) var(--ease-state);
+}
+.pg-product .back:hover { color: var(--fg); }
+.pg-product .back .ic { transform: rotate(90deg); }
+
+/* ---- 粘性页签导航（对应源码 10 个 tab 锚点） ---- */
+.pg-product .subnav { border-bottom: 1px solid var(--border); background: var(--bg); }
+.pg-product .tabs { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.pg-product .tabs::-webkit-scrollbar { display: none; }
+.pg-product .tab { flex: 0 0 auto; }
+
+/* ---- KPI（本页真实指标为 3 项：售价 / 竞品 / 素材） ---- */
+.pg-product .kpi3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+
+/* ---- 闭环进度轨 ---- */
+.pg-product .flow {
+  display: grid; gap: 0; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface); overflow: hidden;
+}
+.pg-product .flow-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.pg-product .flow-step {
+  min-width: 0; padding: var(--sp-3);
+  border-right: 1px solid var(--border);
+  border-top: 2px solid transparent;
+  display: flex; flex-direction: column; gap: .375rem;
+}
+.pg-product .flow-step:last-child { border-right: 0; }
+.pg-product .flow-step.is-done { border-top-color: var(--success); }
+.pg-product .flow-step.is-next, .pg-product .flow-step.is-open { border-top-color: var(--accent); background: var(--accent-tint); }
+.pg-product .flow-step.is-idle h4, .pg-product .flow-step.is-idle h3 { color: var(--muted); }
+.pg-product .flow-idx { font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700; letter-spacing: .1em; color: var(--faint); }
+.pg-product .flow-step h4, .pg-product .flow-step h3 { font-size: var(--fs-body); }
+.pg-product .flow-step p { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--muted); line-height: 1.6; }
+
+/* ---- 语义 tint 块 ---- */
+.pg-product .tint {
+  border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius); padding: var(--sp-3) var(--sp-4); min-width: 0;
+}
+.pg-product .tint-lbl {
+  display: block; margin-bottom: .375rem;
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--faint);
+}
+.pg-product .tint p { color: var(--fg-secondary); }
+.pg-product .tint-ok     { background: var(--success-tint); border-left-color: var(--success); }
+.pg-product .tint-warn   { background: var(--warn-tint);    border-left-color: var(--warn); }
+.pg-product .tint-info   { background: var(--info-tint);    border-left-color: var(--info); }
+.pg-product .tint-accent { background: var(--accent-tint);  border-left-color: var(--accent); }
+.pg-product .tint-accent .tint-lbl { color: var(--accent); }
+.pg-product .tint-ok .tint-lbl { color: var(--success); }
+.pg-product .tint-warn .tint-lbl { color: var(--warn); }
+.pg-product .tint-info .tint-lbl { color: var(--info); }
+
+/* ---- 轻量提示条（状态回执 note） ---- */
+.pg-product .note-ok   { border: 1px solid var(--success); border-left: 3px solid var(--success); border-radius: var(--radius); background: var(--success-tint); padding: var(--sp-2) var(--sp-3); font-size: var(--fs-body); color: var(--fg-secondary); }
+.pg-product .note-warn { border: 1px solid var(--warn);    border-left: 3px solid var(--warn);    border-radius: var(--radius); background: var(--warn-tint);    padding: var(--sp-2) var(--sp-3); font-size: var(--fs-body); color: var(--fg-secondary); }
+.pg-product .note-bad  { border: 1px solid var(--accent);  border-left: 3px solid var(--accent);  border-radius: var(--radius); background: var(--accent-tint);  padding: var(--sp-2) var(--sp-3); font-size: var(--fs-body); color: var(--fg-secondary); }
+.pg-product .note-info { border: 1px solid var(--info);    border-left: 3px solid var(--info);    border-radius: var(--radius); background: var(--info-tint);    padding: var(--sp-2) var(--sp-3); font-size: var(--fs-body); color: var(--fg-secondary); }
+
+/* ---- 中性描边盒（替代裸 Tailwind 边框/底色组合） ---- */
+.pg-product .box { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.pg-product .box-subtle { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-subtle); }
+.pg-product .pg-divide > * + * { border-top: 1px solid var(--border); }
+
+/* ---- 伪表头（grid 表格的表头行） ---- */
+.pg-product .tbl-hd {
+  font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
+  background: var(--surface-subtle);
+}
+
+/* ---- 指标小卡（源码 InsightMetric / 汇总卡） ---- */
+.pg-product .metric {
+  min-width: 0; padding: .5rem .75rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-sunken);
+}
+.pg-product .metric .lbl { display: block; font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-product .metric .val { display: block; margin-top: .125rem; font-family: var(--font-mono); font-weight: 700; }
+
+/* ---- 生成任务左色条卡 ---- */
+.pg-product .job {
+  display: flex; flex-direction: column; gap: var(--sp-2); min-width: 0;
+  border: 1px solid var(--border); border-left-width: 3px; border-left-color: var(--border-strong);
+  border-radius: var(--radius); background: var(--surface); padding: var(--sp-2) var(--sp-3);
+}
+.pg-product .job.is-run  { border-left-color: var(--warn); }
+.pg-product .job.is-ok   { border-left-color: var(--success); }
+.pg-product .job.is-fail { border-left-color: var(--accent); }
+
+/* ---- 文字层级工具（替代 slate 色阶） ---- */
+.pg-product .t-sec   { color: var(--fg-secondary); }
+.pg-product .t-muted { color: var(--muted); }
+.pg-product .t-faint { color: var(--faint); }
+.pg-product .t-info  { color: var(--info); }
+
+/* ---- 图标盒（36px 描边方盒） ---- */
+.pg-product .wf-icon {
+  width: 36px; height: 36px; flex: none; display: grid; place-items: center;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-sunken); color: var(--fg-secondary); font-size: 18px;
+}
+
+/* ---- 折叠编辑区（details.boxed） ---- */
+.pg-product details.boxed {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-subtle); padding: 0 var(--sp-3) var(--sp-3);
+}
+.pg-product details.boxed[open] { padding-bottom: var(--sp-4); }
+.pg-product .pg-summary {
+  display: flex; align-items: center; gap: .5rem; min-height: 44px;
+  cursor: pointer; color: var(--fg-secondary); font-weight: 600;
+}
+.pg-product .pg-summary:hover { color: var(--fg); }
+
+/* ---- 趋势条 ---- */
+.pg-product .trend { display: grid; grid-template-columns: 52px minmax(0, 1fr) 84px; gap: .5rem; align-items: center; }
+.pg-product .trend .t-lbl { font-family: var(--font-mono); font-size: var(--fs-mini); color: var(--faint); }
+.pg-product .trend .t-val { text-align: right; font-family: var(--font-mono); font-size: var(--fs-mini); font-weight: 700; }
+.pg-product .bar { height: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-sunken); overflow: hidden; }
+.pg-product .bar > i { display: block; height: 100%; background: var(--border-strong); }
+.pg-product .bar > .is-ok { background: var(--success); }
+.pg-product .bar > .is-accent { background: var(--accent); }
+.pg-product .bar > .is-info { background: var(--info); }
+
+/* ---- 视频媒体（替代 bg-black 裸色） ---- */
+.pg-product .pg-video {
+  aspect-ratio: 16 / 9; width: 100%;
+  background: var(--fg); object-fit: contain;
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 1023px) {
+  .pg-product .kpi3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pg-product .flow-7 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pg-product .flow-step { border-bottom: 1px solid var(--border); }
+}
+@media (max-width: 767px) {
+  .pg-product .kpi3 { grid-template-columns: minmax(0, 1fr); }
+  .pg-product .flow-7 { grid-template-columns: minmax(0, 1fr); }
+  .pg-product .flow-step { border-right: 0; }
+}

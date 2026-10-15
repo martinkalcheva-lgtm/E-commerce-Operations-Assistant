@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ==== 本地环境与私有产物（2026-10-13 追加，避免密钥/大目录进仓库）====
+api/.venv/
+_backup/
+.workbuddy/
+api/uploads/
+api/data/
